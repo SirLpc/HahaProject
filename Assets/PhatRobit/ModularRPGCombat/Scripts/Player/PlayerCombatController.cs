@@ -78,7 +78,7 @@ public class PlayerCombatController : MonoBehaviour
     // Weap switch
     private int _curWeaponIndex = 0;
     private float _lastSwitchWeaponTime = float.MinValue;   //Last switch weapon time, prevent multy switch one swipe
-    private float _SwitchWeaponInterval = 1.5f;             //Switch interval between two action
+    private float _switchWeaponInterval = 1f;             //Switch interval between two action
 
 
     public Animator Animator

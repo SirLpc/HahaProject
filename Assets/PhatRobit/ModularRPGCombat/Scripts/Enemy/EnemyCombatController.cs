@@ -223,6 +223,7 @@ public class EnemyCombatController : MonoBehaviour
 
 		if(distance <= meleeRange && _weaponCD <= 0)
 		{
+            // Weather the player is in front of me?
 			if(Vector3.Dot(direction.normalized, _t.forward) > 0)
 			{
 				_weaponCD = _weaponData.WeaponSpeed;

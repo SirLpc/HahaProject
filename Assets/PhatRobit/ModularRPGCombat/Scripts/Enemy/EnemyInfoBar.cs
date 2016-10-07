@@ -6,8 +6,11 @@ public class EnemyInfoBar : MonoBehaviour
 {
 	public Vector3 offset = new Vector3(0, 2.5f, 0);		// Offset for the health bar position relative to object position
 	public float barWidth = 100;
+    public float barHeight = 10;
+    public float nameHeight = 20;
 
 	private Rect _barRect;
+    private Rect _nameRect;
 
 	private Vector3 _worldPosition = new Vector3();		// Transform position + offset position
 	private Vector3 _screenPosition = new Vector3();	// Screen position for drawing health bar
@@ -46,7 +49,8 @@ public class EnemyInfoBar : MonoBehaviour
 
 			float x = _screenPosition.x - barWidth / 2f;
 			float y = Screen.height - _screenPosition.y;
-			_barRect = new Rect(x, y, barWidth, 20);
+			_barRect = new Rect(x, y, barWidth, barHeight);
+            _nameRect = new Rect(x, y - barHeight, barWidth, nameHeight);
 		}
 	}
 
@@ -59,7 +63,9 @@ public class EnemyInfoBar : MonoBehaviour
 			GUI.HorizontalScrollbar(_barRect, 0, _enemyStatController.health, 0, _enemyStatController.maxHealth); // Displays a healthbar
 			GUI.color = Color.white;
 			GUI.contentColor = Color.white;
-			GUI.Label(_barRect, _enemyStatController.health + "/" + _enemyStatController.maxHealth); // Displays health in text format
+            var txtInfo = string.Format("{0}/{1}", _enemyStatController.health, _enemyStatController.maxHealth);
+			GUI.Label(_barRect, txtInfo); // Displays health in text format
+            GUI.Label(_nameRect, this.name);
 		}
 	}
 }
