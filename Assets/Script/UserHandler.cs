@@ -13,7 +13,8 @@ public class UserHandler : MonoBehaviour,IHandler {
                 getResult(model.getMessage<UserDTO>());
                 break;
             case UserProtocol.ONELINE_SRES:
-                online(model.getMessage<UserDTO>());
+                //online(model.getMessage<UserDTO>());
+                AutoOnline(model.getMessage<UserDTO>());
                 break;
             case UserProtocol.CREATE_SRES:
                 create(model.getMessage<bool>());                
@@ -31,6 +32,12 @@ public class UserHandler : MonoBehaviour,IHandler {
         {
             NetWorkScript.Instance.write(Protocol.TYPE_USER, 0, UserProtocol.ONLINE_CREQ, null);
         }
+    }
+
+    private void AutoOnline(UserDTO user)
+    {
+        GameData.user = user;
+        GameObject.FindObjectOfType<MainScene>().AutoMatch();
     }
 
     void online(UserDTO user) {

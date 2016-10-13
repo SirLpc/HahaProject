@@ -47,7 +47,8 @@ public class LoginHandler : MonoBehaviour,IHandler {
     {
         switch (result) { 
             case -1:
-                GameData.errors.Add(new ErrorModel("帐号不存在"));
+                //GameData.errors.Add(new ErrorModel("帐号不存在"));
+                GameObject.FindObjectOfType<RegisterPanel>().AutoRegister();
                 break;
             case -2:
                 GameData.errors.Add(new ErrorModel("帐号已登录"));

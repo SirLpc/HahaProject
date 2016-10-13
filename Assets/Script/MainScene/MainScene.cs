@@ -12,7 +12,14 @@ public class MainScene : MonoBehaviour {
     public Text btnTex;
     public GameObject matchWindow;
 	void Start () {
-     //   DisnableUtil.disnable(1024, 768);
+        //   DisnableUtil.disnable(1024, 768);
+
+        if (GameData.user == null)
+        {
+            NetWorkScript.Instance.write(Protocol.TYPE_USER, 0, UserProtocol.GET_CREQ, null);
+        }
+        return;
+
         matchWindow.SetActive(false);
         refreshMain();
         if (GameData.user == null)
@@ -48,6 +55,11 @@ public class MainScene : MonoBehaviour {
         cup.close();
     }
     
+    public void AutoMatch()
+    {
+        NetWorkScript.Instance.write(Protocol.TYPE_MATCH, 0, MatchProtocol.ENTER_CREQ, null);
+    }
+
    public void match() {
         if (btnTex.text == "开始排队")
         {

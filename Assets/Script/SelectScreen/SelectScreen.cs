@@ -17,11 +17,10 @@ public class SelectScreen : MonoBehaviour {
 
 	void Start () {
         SelectEventUtil.selectHero = selectHero;
-        initMask.SetActive(true);
-        initHeroList();
+        //initMask.SetActive(true);
+        //initHeroList();
         NetWorkScript.Instance.write(Protocol.TYPE_SELECT, 0, SelectProtocol.ENTER_CREQ, null);
-        
-	}
+    }
 
     void activeMask() {
         initMask.SetActive(true);
@@ -145,7 +144,7 @@ public class SelectScreen : MonoBehaviour {
     }
 
     public void selectHero(int id) {
-        if(startBtn.enabled)
+        //if (startBtn.enabled)
         NetWorkScript.Instance.write(Protocol.TYPE_SELECT, 0, SelectProtocol.SELECT_CREQ, id);
     }
 }

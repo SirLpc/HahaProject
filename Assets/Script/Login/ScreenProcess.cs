@@ -13,8 +13,13 @@ public class ScreenProcess : MonoBehaviour {
 
     public RegisterPanel rp;
 
-    void Start() {
+    IEnumerator Start() {
         //DisnableUtil.disnable(1024, 768);
+        while (!NetWorkScript.Online)
+        {
+            yield return null;
+        }
+        AutoLogin();
     }
 
     public void AutoLogin()

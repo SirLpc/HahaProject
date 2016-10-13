@@ -11,13 +11,15 @@ public class SelectHandler : MonoBehaviour, IHandler
         switch (model.command)
         {
             case SelectProtocol.ENTER_SRES:
-                myEnter(model.getMessage<SelectRoomDTO>());
+                //myEnter(model.getMessage<SelectRoomDTO>());
+                AutoMyEnter(model.getMessage<SelectRoomDTO>());
                 break;
             case SelectProtocol.ENTER_BRO:
-                otherEnter(model.getMessage<int>());
+                //otherEnter(model.getMessage<int>());
                 break;
             case SelectProtocol.READY_BRO:
-                ready(model.getMessage<SelectModel>());
+                //ready(model.getMessage<SelectModel>());
+                AutoReady(model.getMessage<SelectModel>());
                 break;
             case SelectProtocol.ROOM_DESTORY_BRO:
                 Application.LoadLevel(1);
@@ -26,13 +28,19 @@ public class SelectHandler : MonoBehaviour, IHandler
                 GameData.errors.Add(new ErrorModel("选择角色失败，请重新选择"));
                 break;
             case SelectProtocol.SELECT_BRO:
-                select(model.getMessage<SelectModel>());
+                //select(model.getMessage<SelectModel>());
+                AutoSelect(model.getMessage<SelectModel>());
                 break;
             case SelectProtocol.START_FIGHT_BRO:
                 SendMessage("activeMask");
                 Application.LoadLevelAsync(3);
                 break;
         }
+    }
+
+    private void AutoReady(SelectModel sm)
+    {
+        SelectEventUtil.selectHero(GameData.user.heroList[0]);
     }
 
     private void ready(SelectModel sm)
@@ -68,6 +76,11 @@ public class SelectHandler : MonoBehaviour, IHandler
 
     }
 
+    private void AutoSelect(SelectModel sm)
+    {
+        FindObjectOfType<SelectScreen>().clickStart();
+    }
+
     private void select(SelectModel sm) {
 
         if (myRoom.inTeam(sm.userId)==1) {
@@ -93,14 +106,19 @@ public class SelectHandler : MonoBehaviour, IHandler
         SendMessage("refreshView", myRoom);
     }
 
+    private void AutoMyEnter(SelectRoomDTO room)
+    {
+        myRoom = room;
+    }
+
     private void myEnter(SelectRoomDTO room)
     {
         Debug.Log("接收到自己进入");
         SendMessage("closeMask"); 
         myRoom = room;
         SendMessage("refreshView", room);
-        
     }
+
     private void otherEnter(int id)
     {
         if (myRoom == null) return;
