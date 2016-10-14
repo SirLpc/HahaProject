@@ -13,13 +13,14 @@ public class SelectHandler : MonoBehaviour, IHandler
             case SelectProtocol.ENTER_SRES:
                 //myEnter(model.getMessage<SelectRoomDTO>());
                 AutoMyEnter(model.getMessage<SelectRoomDTO>());
+                SelectEventUtil.selectHero(GameData.user.heroList[0]);
                 break;
             case SelectProtocol.ENTER_BRO:
                 //otherEnter(model.getMessage<int>());
                 break;
             case SelectProtocol.READY_BRO:
                 //ready(model.getMessage<SelectModel>());
-                AutoReady(model.getMessage<SelectModel>());
+                //AutoReady(model.getMessage<SelectModel>());
                 break;
             case SelectProtocol.ROOM_DESTORY_BRO:
                 Application.LoadLevel(1);
@@ -32,7 +33,7 @@ public class SelectHandler : MonoBehaviour, IHandler
                 AutoSelect(model.getMessage<SelectModel>());
                 break;
             case SelectProtocol.START_FIGHT_BRO:
-                SendMessage("activeMask");
+                //SendMessage("activeMask");
                 Application.LoadLevelAsync(3);
                 break;
         }
@@ -40,7 +41,7 @@ public class SelectHandler : MonoBehaviour, IHandler
 
     private void AutoReady(SelectModel sm)
     {
-        SelectEventUtil.selectHero(GameData.user.heroList[0]);
+        FindObjectOfType<SelectScreen>().clickStart();
     }
 
     private void ready(SelectModel sm)
@@ -78,7 +79,12 @@ public class SelectHandler : MonoBehaviour, IHandler
 
     private void AutoSelect(SelectModel sm)
     {
-        FindObjectOfType<SelectScreen>().clickStart();
+        //SelectEventUtil.selectHero(GameData.user.heroList[0]);
+        if (sm.userId == GameData.user.id)
+        {
+            FindObjectOfType<SelectScreen>().clickStart();
+            Debug.Log("I ve selected hero and clicked ready " + sm.heroId);
+        }
     }
 
     private void select(SelectModel sm) {
