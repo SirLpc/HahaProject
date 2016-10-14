@@ -28,7 +28,7 @@ public class FightScene : MonoBehaviour {
 
 
     void Start() {
-        Screen.fullScreen = true;
+        //Screen.fullScreen = true;
         GameData.Par = HPCanvas;
         skillTip = skillTipBase;
         NetWorkScript.Instance.write(Protocol.TYPE_FIGHT, 0, FightProtocol.ENTER_CREQ, null);

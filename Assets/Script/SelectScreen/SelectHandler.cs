@@ -34,6 +34,7 @@ public class SelectHandler : MonoBehaviour, IHandler
                 break;
             case SelectProtocol.START_FIGHT_BRO:
                 //SendMessage("activeMask");
+                Debug.Log("Join scene 3");
                 Application.LoadLevelAsync(3);
                 break;
         }
