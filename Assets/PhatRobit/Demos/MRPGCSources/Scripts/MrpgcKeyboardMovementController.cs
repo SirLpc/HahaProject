@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
+using  System.Collections;
 using OneByOne;
 using UnityStandardAssets.CrossPlatformInput;
+using System.Linq;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(CharacterController))]
@@ -43,6 +45,8 @@ public class MrpgcKeyboardMovementController : MonoBehaviour
 	private AnimatorTransitionInfo _transInfo;
 
     private Vector3 _lastSentInput = new Vector3();
+
+    private static float[] _sampleInput = new []{ -1f, -0.57f, -0.5f, -0.25f, 0f, 0.25f, 0.5f, 0.75f, 1f };
 
 	void Awake()
 	{
@@ -88,10 +92,16 @@ public class MrpgcKeyboardMovementController : MonoBehaviour
             x = CrossPlatformInputManager.GetAxis("Horizontal");
 			z = CrossPlatformInputManager.GetAxis("Vertical");
 #endif
-        if (x > 0) x = 1;
-        if (z > 0) z = 1;
-        if (x < 0) x = -1;
-        if (z < 0) z = -1;
+        //if (x > 0) x = 1;
+        //if (z > 0) z = 1;
+        //if (x < 0) x = -1;
+        //if (z < 0) z = -1;
+        //x = getNear(_sampleInput, x);
+        //z = getNear(_sampleInput, z);
+        var resultx = (from lx in _sampleInput select new { Key = lx, Value = Mathf.Abs(lx - x) }).OrderBy(lx => lx.Value).Take(1);
+        resultx.ToList().ForEach(lx => { x = lx.Key; });
+        var resulty = (from ly in _sampleInput select new { Key = ly, Value = Mathf.Abs(ly - z) }).OrderBy(ly => ly.Value).Take(1);
+        resulty.ToList().ForEach(ly => { z = ly.Key; });
 
         if (_lastSentInput.x == x && _lastSentInput.z == z)
             return;
@@ -100,6 +110,22 @@ public class MrpgcKeyboardMovementController : MonoBehaviour
         m.x = x; m.y = 0; m.z = z;
         NetWorkScript.Instance.write(Protocol.TYPE_FIGHT, 0, FightProtocol.MOVE_CREQ, m);
         _lastSentInput = new Vector3(m.x, m.y, m.z);
+    }
+
+    private float getNear(float[] array, float target)
+    {
+        int min = 0;
+        int max = array.Length - 1;
+        int mid = (int)(min + max) / 2;
+
+        while (max - min > 1)
+        {
+            if (target == array[mid]) return mid;
+            if (target < array[mid]) max = mid;
+            if (target > array[mid]) min = mid;
+            mid = (int)(min + max) / 2;
+        }
+        return array[max] - target < target - array[min] ? max : min;
     }
 
     void Update()
