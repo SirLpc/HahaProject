@@ -14,7 +14,10 @@ public class EnemyEye : MonoBehaviour {
     void Start() {
         con=GetComponent<PlayerComponent>().con;
     }
-	void Update () {
+	void Update ()
+	{
+	    return;
+
         if (list.Count > 0)
         {
             

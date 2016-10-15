@@ -7,10 +7,15 @@ public class PlayerCon : MonoBehaviour
 
     public GameObject EyeRange;
     public GameObject hpObj;
+    public MrpgcKeyboardMovementController moveController;
+    public PlayerCombatController combatController;
+    public PlayerStatController stateController;
 
     protected NavMeshAgent agent=null;
 
     protected Animator anim;
+
+    public bool IsSelf { protected set; get; }
 
     private FightPlayerModel data;
 
@@ -35,7 +40,9 @@ public class PlayerCon : MonoBehaviour
 
     public void StartMove(MoveDTO dto)
     {
-        
+        moveController.NetWorkInputGet(dto);
+        return;
+
         myState = PlayerState.RUN;
         if (agent==null) agent = GetComponent<NavMeshAgent>();
         agent.ResetPath();
@@ -46,7 +53,9 @@ public class PlayerCon : MonoBehaviour
     public void setTag(string tag)
     {
         gameObject.tag = tag;
-        EyeRange.tag = tag;
+
+        if(EyeRange)
+            EyeRange.tag = tag;
     }
     // Update is called once per frame
     void Update()
@@ -105,6 +114,8 @@ public class PlayerCon : MonoBehaviour
         data.hp -= value;
         if (data.hp < 0) data.hp = 0;
         if (data.hp > data.maxHp) data.hp = data.maxHp;
-        hpObj.GetComponent<HpProcess>().hpChange((float)data.hp/data.maxHp);
+
+        stateController.TakeDamage(value);
+        //hpObj.GetComponent<HpProcess>().hpChange((float)data.hp/data.maxHp);
     }
 }

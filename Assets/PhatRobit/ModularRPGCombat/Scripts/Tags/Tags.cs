@@ -7,4 +7,7 @@ public class Tags
 	public const string player = "Player";
     public const string gameController = "GameController";
 	public const string enemy = "Enemy";
+
+    public const string FriendHero = "friendHero";
+    public const string EnemyHero = "enemyHero";
 }

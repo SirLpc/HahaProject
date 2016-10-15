@@ -15,8 +15,10 @@ public class SelectScreen : MonoBehaviour {
     public SelectRoomDTO room;
     private Dictionary<int, HeroGrid> myGrid = new Dictionary<int, HeroGrid>();
 
-	void Start () {
+	IEnumerator Start ()
+	{
         SelectEventUtil.selectHero = selectHero;
+	    yield return null;
         //initMask.SetActive(true);
         //initHeroList();
         NetWorkScript.Instance.write(Protocol.TYPE_SELECT, 0, SelectProtocol.ENTER_CREQ, null);
@@ -43,7 +45,7 @@ public class SelectScreen : MonoBehaviour {
     
     }
 
-    void refreshHeroList(SelectRoomDTO dto)
+    public void refreshHeroList(SelectRoomDTO dto)
     {
         room = dto;
         int team = dto.inTeam(GameData.user.id);
@@ -108,7 +110,8 @@ public class SelectScreen : MonoBehaviour {
         startBtn.enabled = false;
     }
 
-    public void clickStart() {
+    public void clickStart()
+    {
         int team = room.inTeam(GameData.user.id);
         SelectModel[] sm;
         if (team == 1)
@@ -137,13 +140,15 @@ public class SelectScreen : MonoBehaviour {
                 if (last.Contains(item)) continue;
                 temp.Add(item);
             }
-            NetWorkScript.Instance.write(Protocol.TYPE_SELECT, 0, SelectProtocol.SELECT_CREQ, temp[Random.Range(0, temp.Count - 1)]);
+            //NetWorkScript.Instance.write(Protocol.TYPE_SELECT, 0, SelectProtocol.SELECT_CREQ, temp[Random.Range(0, temp.Count - 1)]);
+            NetWorkScript.Instance.write(Protocol.TYPE_SELECT, 0, SelectProtocol.SELECT_CREQ, 1);
         }
 
         NetWorkScript.Instance.write(Protocol.TYPE_SELECT, 0, SelectProtocol.READY_CREQ, null);
     }
 
-    public void selectHero(int id) {
+    public void selectHero(int id)
+    {
         //if (startBtn.enabled)
         NetWorkScript.Instance.write(Protocol.TYPE_SELECT, 0, SelectProtocol.SELECT_CREQ, id);
     }

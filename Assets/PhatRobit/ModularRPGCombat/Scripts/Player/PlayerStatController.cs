@@ -2,10 +2,8 @@
 using System.Collections;
 
 [RequireComponent(typeof(Animator))]
-public class PlayerStatController : MonoBehaviour
+public class PlayerStatController : StateBase
 {
-	public int health = 100;			// GameObject's current health
-	public int maxHealth = 100;			// GameObject's max health
 	public int mana = 100;				// GameObject's current mana
 	public int maxMana = 100;			// GameObject's max mana
 	public int experience = 0;			// Player's experience points
@@ -23,7 +21,6 @@ public class PlayerStatController : MonoBehaviour
 	public Color hurtColor = Color.red;	// This is the color the playerRenderer will change to when hurt
 	public float hurtFadeSpeed = 1;		// The speed at which the hurtColor fades away
 
-	private bool _alive = true;			// Is the player alive or dead?
 	private Vector3 _spawnPoint;		// Initial spawn point
 	private Color _defaultColor;		// The default color for the gameObject's material
 
@@ -34,11 +31,6 @@ public class PlayerStatController : MonoBehaviour
 
 	private float _healthTimer = 0;		// How much in between health additions (when it will give "healthAmount" to the player).
 	private float _manaTimer = 10;		// How much in between mana additions (when it will give "healthAmount" to the player).
-
-    public bool Alive
-    {
-        get { return _alive; }
-    }
 
 	void Awake()
 	{
@@ -148,7 +140,16 @@ public class PlayerStatController : MonoBehaviour
 		}
 	}
 
-	public void TakeDamage(int amount)
+    /// <summary>
+    /// Init player data from Network
+    /// </summary>
+    public void NetSpawn(OneByOne.FightPlayerModel model)
+    {
+        base.health = base.maxHealth = model.maxHp;
+        base.playerName = model.name;
+    }
+
+    public void TakeDamage(int amount)
 	{
 		// Decrement this GameObject's health by amount inflected by the other GameObject.
 		health -= amount;

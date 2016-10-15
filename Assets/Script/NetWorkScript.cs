@@ -36,7 +36,7 @@ public class NetWorkScript {
         try
         {
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect("127.0.0.1", 6650);
+            socket.Connect("115.28.87.227", 6650);
             socket.BeginReceive(readBuff, 0, 1024, SocketFlags.None, ReceiveCallBack, readBuff);
             Online = true;
             Debug.Log("连接服务器成功");

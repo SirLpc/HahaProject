@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using OneByOne;
 
-public class MeleeHitbox : MonoBehaviour
+public class MeleeHitbox : SkillBase
 {
 	public PlayerCombatController playerCombat;
 	public float activeTime = 1;
@@ -25,8 +26,9 @@ public class MeleeHitbox : MonoBehaviour
 	{
 		if(playerCombat)
 		{
-			if(other.CompareTag(Tags.enemy))
-			{
+            //if(other.CompareTag(Tags.enemy))
+            if (other.CompareTag(Tags.EnemyHero))
+            {
 				int damage = playerCombat.WeaponDamage;
 
 				if(playerCombat.Animator.GetBool("SpecialAttack"))
@@ -34,11 +36,13 @@ public class MeleeHitbox : MonoBehaviour
 					damage *= 2;
 				}
 
-				EnemyStatController enemyStats = other.GetComponent<EnemyStatController>();
+				StateBase enemyStats = other.GetComponent<StateBase>();
 
 				if(enemyStats && enemyStats.Alive)
 				{
-					enemyStats.TakeDamage(damage);
+					//enemyStats.TakeDamage(damage);
+				    base.target = other.gameObject;
+                    base.NetWorkSetDamage();
 				}
 			}
 		}

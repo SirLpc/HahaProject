@@ -6,9 +6,15 @@ using UnityEngine;
 public static class LocalPlayerPrefabs
 {
 
+#if UNITY_EDITOR
     private const string UIDKEY = "UIDKEY";
     private const string UPWDKEY = "UPWDKEY";
     private const string UNAMEKEY = "UNAMEKEY";
+#else
+    private const string UIDKEY = "UIDKEY1";
+    private const string UPWDKEY = "UPWDKEY1";
+    private const string UNAMEKEY = "UNAMEKEY1";
+#endif
 
     public static string GetId()
     {

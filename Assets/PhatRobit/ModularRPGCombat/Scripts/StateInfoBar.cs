@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(EnemyStatController))]
-public class EnemyInfoBar : MonoBehaviour
+[RequireComponent(typeof(StateBase))]
+public class StateInfoBar : MonoBehaviour
 {
 	public Vector3 offset = new Vector3(0, 2.5f, 0);		// Offset for the health bar position relative to object position
 	public float barWidth = 100;
-    public float barHeight = 10;
+    public float barHeight = 20;
     public float nameHeight = 20;
 
 	private Rect _barRect;
@@ -17,7 +17,7 @@ public class EnemyInfoBar : MonoBehaviour
 
 	private bool _visible = false;						// Health bar is visible or not
 
-	private EnemyStatController _enemyStatController;	// Reference to Enemy Stat script
+	private StateBase _statController;	// Reference to Enemy Stat script
 	private Transform _t;								// Reference to object transform
 	private Color _barColor = Color.red;				// Used by the Infobar
 
@@ -30,7 +30,7 @@ public class EnemyInfoBar : MonoBehaviour
 	void Start()
 	{
 		_t = transform;
-		_enemyStatController = GetComponent<EnemyStatController>();
+		_statController = GetComponent<StateBase>();
 	}
 
 	void Update()
@@ -60,12 +60,12 @@ public class EnemyInfoBar : MonoBehaviour
 		if(_visible)
 		{
 			GUI.color = _barColor;
-			GUI.HorizontalScrollbar(_barRect, 0, _enemyStatController.health, 0, _enemyStatController.maxHealth); // Displays a healthbar
+			GUI.HorizontalScrollbar(_barRect, 0, _statController.health, 0, _statController.maxHealth); // Displays a healthbar
 			GUI.color = Color.white;
 			GUI.contentColor = Color.white;
-            var txtInfo = string.Format("{0}/{1}", _enemyStatController.health, _enemyStatController.maxHealth);
+            var txtInfo = string.Format("{0}/{1}", _statController.health, _statController.maxHealth);
 			GUI.Label(_barRect, txtInfo); // Displays health in text format
-            GUI.Label(_nameRect, this.name);
+            GUI.Label(_nameRect, _statController.playerName);
 		}
 	}
 }

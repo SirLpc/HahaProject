@@ -13,14 +13,13 @@ public class SelectHandler : MonoBehaviour, IHandler
             case SelectProtocol.ENTER_SRES:
                 //myEnter(model.getMessage<SelectRoomDTO>());
                 AutoMyEnter(model.getMessage<SelectRoomDTO>());
-                SelectEventUtil.selectHero(GameData.user.heroList[0]);
                 break;
             case SelectProtocol.ENTER_BRO:
                 //otherEnter(model.getMessage<int>());
                 break;
             case SelectProtocol.READY_BRO:
                 //ready(model.getMessage<SelectModel>());
-                //AutoReady(model.getMessage<SelectModel>());
+                AutoReady(model.getMessage<SelectModel>());
                 break;
             case SelectProtocol.ROOM_DESTORY_BRO:
                 Application.LoadLevel(1);
@@ -42,7 +41,33 @@ public class SelectHandler : MonoBehaviour, IHandler
 
     private void AutoReady(SelectModel sm)
     {
-        FindObjectOfType<SelectScreen>().clickStart();
+        if (myRoom == null)
+            return;
+
+        if (myRoom.inTeam(sm.userId) == 1)
+        {
+            foreach (SelectModel item in myRoom.teamOne)
+            {
+                if (item.userId == sm.userId)
+                {
+                    item.heroId = sm.heroId;
+                    item.ready = sm.ready;
+                }
+            }
+        }
+        else
+        {
+            foreach (SelectModel item in myRoom.teamTwo)
+            {
+                if (item.userId == sm.userId)
+                {
+                    item.heroId = sm.heroId;
+                    item.ready = sm.ready;
+                }
+            }
+        }
+
+        FindObjectOfType<SelectScreen>().refreshHeroList(myRoom);
     }
 
     private void ready(SelectModel sm)
@@ -80,12 +105,38 @@ public class SelectHandler : MonoBehaviour, IHandler
 
     private void AutoSelect(SelectModel sm)
     {
+         var ss =  FindObjectOfType<SelectScreen>();
+
         //SelectEventUtil.selectHero(GameData.user.heroList[0]);
         if (sm.userId == GameData.user.id)
         {
-            FindObjectOfType<SelectScreen>().clickStart();
+            if (myRoom.inTeam(sm.userId) == 1)
+            {
+                foreach (SelectModel item in myRoom.teamOne)
+                {
+                    if (item.userId == sm.userId)
+                    {
+                        item.heroId = sm.heroId;
+                    }
+                }
+            }
+            else
+            {
+                foreach (SelectModel item in myRoom.teamTwo)
+                {
+                    if (item.userId == sm.userId)
+                    {
+                        item.heroId = sm.heroId;
+                    }
+                }
+            }
+
+            ss.refreshHeroList(myRoom);
+            ss.clickStart();
+
             Debug.Log("I ve selected hero and clicked ready " + sm.heroId);
         }
+
     }
 
     private void select(SelectModel sm) {
@@ -116,6 +167,8 @@ public class SelectHandler : MonoBehaviour, IHandler
     private void AutoMyEnter(SelectRoomDTO room)
     {
         myRoom = room;
+        //SelectEventUtil.selectHero(GameData.user.heroList[0]);
+        SelectEventUtil.selectHero(1);
     }
 
     private void myEnter(SelectRoomDTO room)

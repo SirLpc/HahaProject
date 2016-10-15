@@ -36,6 +36,9 @@ public class MrpgcDemoGUI : MonoBehaviour
 
 	void Update()
 	{
+	    if (_playerCombatController == null)
+	        return;
+
 		if(_autoAim)
 		{
 			_playerCombatController.autoAimMelee = true;

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using OneByOne;
 using UnityStandardAssets.CrossPlatformInput;
 
 [RequireComponent(typeof(Animator))]
@@ -11,6 +12,9 @@ public class MrpgcKeyboardMovementController : MonoBehaviour
 
 	public float jumpHeight = 8;					// Height to jump
 	public float gravity = 2;
+
+    [SerializeField]
+    private PlayerCon hero;
 
 	private CharacterController _controller;		// Reference to the CharacterController
 	private Animator _animator;						// Reference to the Animator
@@ -37,6 +41,8 @@ public class MrpgcKeyboardMovementController : MonoBehaviour
 
 	private AnimatorStateInfo _stateInfo;
 	private AnimatorTransitionInfo _transInfo;
+
+    private Vector3 _lastSentInput = new Vector3();
 
 	void Awake()
 	{
@@ -66,7 +72,37 @@ public class MrpgcKeyboardMovementController : MonoBehaviour
 		_locoPivotTransRight = Animator.StringToHash("Base Layer.Locomotion -> Base Layer.Locomotion Pivot Right");
 	}
 
-	void Update()
+    public void NetWorkInputGet(OneByOne.MoveDTO input)
+    {
+        _input.x = input.x;
+        _input.y = input.z;
+    }
+
+    private void NetWorkInputSet()
+    {
+        float x, z;
+#if UNITY_EDITOR
+        x = Input.GetAxis("Horizontal");
+        z = Input.GetAxis("Vertical");
+#else
+            x = CrossPlatformInputManager.GetAxis("Horizontal");
+			z = CrossPlatformInputManager.GetAxis("Vertical");
+#endif
+        if (x > 0) x = 1;
+        if (z > 0) z = 1;
+        if (x < 0) x = -1;
+        if (z < 0) z = -1;
+
+        if (_lastSentInput.x == x && _lastSentInput.z == z)
+            return;
+
+        MoveDTO m = new MoveDTO();
+        m.x = x; m.y = 0; m.z = z;
+        NetWorkScript.Instance.write(Protocol.TYPE_FIGHT, 0, FightProtocol.MOVE_CREQ, m);
+        _lastSentInput = new Vector3(m.x, m.y, m.z);
+    }
+
+    void Update()
 	{
 		if(_hash)
 		{
@@ -78,18 +114,13 @@ public class MrpgcKeyboardMovementController : MonoBehaviour
 				_walking = !_walking;
 			}
 
-#if UNITY_EDITOR
-            _input.x = Input.GetAxis("Horizontal");
-			_input.y = Input.GetAxis("Vertical");
-#else
-            _input.x = CrossPlatformInputManager.GetAxis("Horizontal");
-			_input.y = CrossPlatformInputManager.GetAxis("Vertical");
-#endif
+            if(hero.IsSelf)
+		        NetWorkInputSet();
+
             //StickToWorldspace();
             transform.LookAt(transform.position + new Vector3(_input.x, 0, _input.y));
 
             float speed = _input.sqrMagnitude >= 0.00001 ? 1 : 0;
-            
 
 			if(_walking)
 			{

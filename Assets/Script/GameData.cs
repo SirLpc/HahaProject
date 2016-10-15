@@ -11,9 +11,9 @@ using UnityEngine;
        public static List<ErrorModel> errors = new List<ErrorModel>();
        public static UserDTO user = null;
 
-       public static Vector3 teamOneStart = new Vector3(143.6f, 7.3f, 16.4f);
+       public static Vector3 teamOneStart = new Vector3(-4f, 0f, 0f     /*143.6f, 7.3f, 16.4f*/);
 
-       public static Vector3 teamTwoStart = new Vector3(17.3f, 7.3f, 143.27f);
+       public static Vector3 teamTwoStart = new Vector3(4f, 0f, 0f      /*17.3f, 7.3f, 143.27f*/);
 
        public static RectTransform Par;
 

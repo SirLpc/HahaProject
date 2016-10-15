@@ -4,12 +4,16 @@ using System.Collections;
 public class Hero1:PlayerCon,IHero {
 
     public GameObject effect;
+
     private GameObject[] targets;
     private Transform target;
     private int skillCode;
 
     public void attack(GameObject[] targets)
     {
+        combatController.NetWorkAttackGet();
+        return;
+
         if (PlayerState.RUN == myState)
         {
             agent.CompleteOffMeshLink(); ;
@@ -56,8 +60,9 @@ public class Hero1:PlayerCon,IHero {
     public void setData(OneByOne.FightPlayerModel model)
     {
         base.Data = model;
+        base.stateController.NetSpawn(model);
+        IsSelf = model.id == GameData.user.id;
     }
-
 
     public GameObject getHpObj()
     {

@@ -19,6 +19,9 @@ public class ScreenProcess : MonoBehaviour {
         {
             yield return null;
         }
+
+        yield return null;
+
         AutoLogin();
     }
 

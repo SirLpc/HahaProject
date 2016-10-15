@@ -3,10 +3,8 @@ using System.Collections;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(EnemyCombatController))]
-public class EnemyStatController : MonoBehaviour
+public class EnemyStatController : StateBase
 {
-	public int health = 100;								// GameObject's current health
-	public int maxHealth = 100;								// GameObject's max health
 	public bool giveExperiencePoints;						// Wether or not this gameObject gives experience to the player
 	public int experiencePoints = 10;						// Amount of experience to give to the player
 	public AudioClip deathSFX;								// Death SFX that plays when gameObject dies
@@ -14,7 +12,6 @@ public class EnemyStatController : MonoBehaviour
 	public Color hurtColor = Color.red;						// This is the color the enemyMaterial will change to when hurt
 	public float hurtFadeSpeed = 1;							// The speed at which the hurtColor fades away
 
-	private bool _alive = true;								// Are you still there?
 
 	private Animator _animator;								// Reference to the animator component
 	private HashIDs _hash;									// Reference to the HashIDs script.
@@ -22,11 +19,6 @@ public class EnemyStatController : MonoBehaviour
 	private Color _defaultColor;							// The default color for the gameObject's material
 
     private EnemyCombatController _combatController;
-
-    public bool Alive
-    {
-        get { return _alive; }
-    }
 
 	void Awake()
 	{

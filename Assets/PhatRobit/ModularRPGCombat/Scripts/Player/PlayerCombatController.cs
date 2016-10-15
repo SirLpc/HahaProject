@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using OneByOne;
 using UnityStandardAssets.CrossPlatformInput;
 
 [RequireComponent(typeof(Animator))]
@@ -55,7 +56,9 @@ public class PlayerCombatController : MonoBehaviour
 	public AudioClip gunReadySFX;				// The sound that plays when using the gun
 	public AudioClip gunFireSFX;				// The sound that plays when the gun is fired
 
-	private GameObject _sword;					// Reference to currently equipped sword object
+    [SerializeField] private PlayerCon hero;
+
+    private GameObject _sword;					// Reference to currently equipped sword object
 	private GameObject _gun;					// Reference to currently equipped gun object
 	private GameObject _bow;					// Reference to currently equipped bow object
 
@@ -69,6 +72,7 @@ public class PlayerCombatController : MonoBehaviour
 	private Animator _animator;					// Reference to the gameobject's animator
 
 	private AnimatorStateInfo _state;			// Animation state information used to check if we are in the attack animation states
+    private MeleeHitbox _meleeHitbox;
 
 	// Hash IDs for attack animations
 	private int _meleeID = 0;
@@ -103,6 +107,7 @@ public class PlayerCombatController : MonoBehaviour
 		_t = transform;
 		_bulletTrail = GetComponent<LineRenderer>();
 		_animator = GetComponent<Animator>();
+	    _meleeHitbox = meleeHitbox.GetComponent<MeleeHitbox>();
 
 		_meleeID = Animator.StringToHash("Base Layer.MeleeAttack");
 		_specialID = Animator.StringToHash("Base Layer.SpecialAttack");
@@ -111,6 +116,41 @@ public class PlayerCombatController : MonoBehaviour
 		// We initialize our weapon data and give it some parameters for our initial weapon
 		EquipWeapon(WeaponType.Melee, meleeDamage, meleeWaitTime);
 	}
+
+    private void NetWorkAttackSet()
+    {
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(attackKey))
+#else
+            if (CrossPlatformInputManager.GetButtonDown("Fire1"))
+#endif
+        {
+            NetWorkScript.Instance.write(Protocol.TYPE_FIGHT, 0, FightProtocol.ATTACK_CREQ, new int[] { hero.Data.id });
+        }
+    }
+
+    public void NetWorkAttackGet()
+    {
+        _attacked = false;
+        _weaponCD = _weaponData.WeaponSpeed;
+
+        AutoAim();
+
+        if (_weaponData.WeaponType == WeaponType.Melee)
+        {
+            _animator.SetBool("MeleeAttack", true);
+        }
+        else if (_weaponData.WeaponType == WeaponType.Ranged)
+        {
+            _animator.SetBool("RangedAttack", true);
+
+            if (GetComponent<AudioSource>() && gunReadySFX)
+            {
+                GetComponent<AudioSource>().clip = gunReadySFX;
+                GetComponent<AudioSource>().Play();
+            }
+        }
+    }
 
 	void Update()
 	{
@@ -159,32 +199,8 @@ public class PlayerCombatController : MonoBehaviour
             InputEquipWeapon();
 
             // Attack!
-#if UNITY_EDITOR
-            if (Input.GetKeyDown(attackKey))
-#else
-            if (CrossPlatformInputManager.GetButtonDown("Fire1"))
-#endif
-            {
-                _attacked = false;
-                _weaponCD = _weaponData.WeaponSpeed;
-
-                AutoAim();
-
-                if (_weaponData.WeaponType == WeaponType.Melee)
-                {
-                    _animator.SetBool("MeleeAttack", true);
-                }
-                else if (_weaponData.WeaponType == WeaponType.Ranged)
-                {
-                    _animator.SetBool("RangedAttack", true);
-
-                    if (GetComponent<AudioSource>() && gunReadySFX)
-                    {
-                        GetComponent<AudioSource>().clip = gunReadySFX;
-                        GetComponent<AudioSource>().Play();
-                    }
-                }
-            }
+            if(hero.IsSelf)
+                NetWorkAttackSet();
 
             // Special Attack!
             if (_weaponData.WeaponType == WeaponType.Melee) // Only allow special attack with melee weapon
@@ -243,8 +259,8 @@ public class PlayerCombatController : MonoBehaviour
 				{
 					EnemyStatController enemyStats = enemy.GetComponent<EnemyStatController>();
 
-					EnemyInfoBar _enemyInfoBar;
-					_enemyInfoBar = enemy.GetComponent<EnemyInfoBar>();
+					StateInfoBar _enemyInfoBar;
+					_enemyInfoBar = enemy.GetComponent<StateInfoBar>();
 					_enemyInfoBar.BarColor = enemyInfoBarColor;
 					
 					if(enemyStats && enemyStats.Alive)
@@ -265,8 +281,8 @@ public class PlayerCombatController : MonoBehaviour
 					Vector3 point = target.position;
 					point.y = _t.position.y;
 					_t.LookAt(point);
-					EnemyInfoBar _enemyInfoBar;
-					_enemyInfoBar = target.GetComponent<EnemyInfoBar>();
+					StateInfoBar _enemyInfoBar;
+					_enemyInfoBar = target.GetComponent<StateInfoBar>();
 					_enemyInfoBar.BarColor = targetedEnemyColor;
 				}
 			}
@@ -275,7 +291,7 @@ public class PlayerCombatController : MonoBehaviour
 
     private void InputEquipWeapon()
     {
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE
         if (Input.GetKeyDown(swordKey))
         {
             EquipWeapon(WeaponType.Melee, meleeDamage, meleeWaitTime);
@@ -302,7 +318,7 @@ public class PlayerCombatController : MonoBehaviour
         }
 #else
         var axis = CrossPlatformInputManager.GetAxis("Mouse X");
-        if (Time.time - _lastSwitchWeaponTime < _SwitchWeaponInterval)
+        if (Time.time - _lastSwitchWeaponTime < _switchWeaponInterval)
             return;
         if (axis < -0.2f)
         {
@@ -335,8 +351,8 @@ public class PlayerCombatController : MonoBehaviour
                 Vector3 point = target.position;
                 point.y = _t.position.y;
                 _t.LookAt(point);
-                EnemyInfoBar _enemyInfoBar;
-                _enemyInfoBar = target.GetComponent<EnemyInfoBar>();
+                StateInfoBar _enemyInfoBar;
+                _enemyInfoBar = target.GetComponent<StateInfoBar>();
                 _enemyInfoBar.BarColor = targetedEnemyColor;
             }
         }
@@ -353,8 +369,8 @@ public class PlayerCombatController : MonoBehaviour
         {
             EnemyStatController enemyStats = enemy.GetComponent<EnemyStatController>();
 
-            EnemyInfoBar _enemyInfoBar;
-            _enemyInfoBar = enemy.GetComponent<EnemyInfoBar>();
+            StateInfoBar _enemyInfoBar;
+            _enemyInfoBar = enemy.GetComponent<StateInfoBar>();
             _enemyInfoBar.BarColor = enemyInfoBarColor;
 
             if (enemyStats && enemyStats.Alive)
@@ -381,6 +397,7 @@ public class PlayerCombatController : MonoBehaviour
 			if(meleeHitbox)
 			{
 				meleeHitbox.SetActive(true);
+                _meleeHitbox.setData(null, -1, hero.Data.id);
 			}
 
 			if(GetComponent<AudioSource>() && swordSFX)

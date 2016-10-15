@@ -22,7 +22,6 @@ public class FightHandler : MonoBehaviour,IHandler {
                 fightStart(model.getMessage<FightRoomModel>());
                 break;
             case FightProtocol.MOVE_BRO:
-                
                 move(model.getMessage<MoveDTO>());
                 break;
             case FightProtocol.SKILL_UP_SRES:
@@ -41,8 +40,9 @@ public class FightHandler : MonoBehaviour,IHandler {
         foreach (int[] item in dto.targetDamage)
         {
             GameObject target=heros[item[0]];
-            GameObject obj= Instantiate(ResourceLoad.getHpUp(), target.transform.position+Vector3.up*2, Camera.main.transform.rotation) as GameObject;
-            obj.GetComponent<HpUp>().setValue(item[1]);
+            //todo damage text effect
+            //GameObject obj= Instantiate(ResourceLoad.getHpUp(), target.transform.position+Vector3.up*2, Camera.main.transform.rotation) as GameObject;
+            //obj.GetComponent<HpUp>().setValue(item[1]);
             target.GetComponent<PlayerComponent>().con.damage(item[1]);
         }
     }
@@ -112,31 +112,35 @@ public class FightHandler : MonoBehaviour,IHandler {
         {
             o = (GameObject)Instantiate(ResourceLoad.getHeroModel(model.heroId), GameData.teamTwoStart, Quaternion.identity);
         }
-        GameObject hp = Instantiate<GameObject>(ResourceLoad.getBar());
         IHero pc = o.GetComponent<PlayerComponent>().con;
         pc.setData(model);
-        pc.setHp(hp, scene.par);
+        //todo set hpbar, case now, we use gui statebar for quick start
+        //GameObject hp = Instantiate<GameObject>(ResourceLoad.getBar());
+        //pc.setHp(hp, scene.par);
         if (scene.myTeam == team)
         {
             o.layer = LayerMask.NameToLayer("visible");
-            hp.GetComponent<HpProcess>().setColorAndName(Color.green, model.name);
+            //hp.GetComponent<HpProcess>().setColorAndName(Color.green, model.name);
             Destroy(o.GetComponent<EnemyEye>());
-            pc.setTag("friendHero");
+            pc.setTag(Tags.FriendHero);
             if (model.id == GameData.user.id)
             {
                 FightScene.player = model;
                 scene.myHero = o;
-                scene.myHead.sprite = ResourceLoad.getHead(model.heroId.ToString());
-                scene.initUI();
-                scene.cameraReset();
+                //todo set head portrait
+                //scene.myHead.sprite = ResourceLoad.getHead(model.heroId.ToString());
+
+                //scene.initUI();       //Mainly skill uis
+                //scene.cameraReset();
+                scene.InitFollowCamera(o);
             }
         }
         else
         {
             o.layer = LayerMask.NameToLayer("disible");
            
-            pc.setTag("enemyHero");
-            hp.GetComponent<HpProcess>().setColorAndName(Color.red, model.name);
+            pc.setTag(Tags.EnemyHero);
+            //hp.GetComponent<HpProcess>().setColorAndName(Color.red, model.name);
         }
         heros.Add(model.id, o);        
        

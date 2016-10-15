@@ -3,6 +3,8 @@ using System.Collections;
 using OneByOne;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityStandardAssets.Utility;
+
 public class FightScene : MonoBehaviour {
     [HideInInspector]
     public int myTeam=0;
@@ -27,7 +29,10 @@ public class FightScene : MonoBehaviour {
     public static SkillTip skillTip;
 
 
-    void Start() {
+    IEnumerator Start()
+    {
+        yield return null;
+
         //Screen.fullScreen = true;
         GameData.Par = HPCanvas;
         skillTip = skillTipBase;
@@ -37,6 +42,8 @@ public class FightScene : MonoBehaviour {
 
     public void initUI()
     {
+        return;
+
         int i = 0;
         foreach (FightSkill item in player.skills)
         {
@@ -47,6 +54,8 @@ public class FightScene : MonoBehaviour {
 
     public void refreshUI()
     {
+        return;
+
         int i = 0;
         foreach (FightSkill item in player.skills)
 	    {            
@@ -142,7 +151,10 @@ public class FightScene : MonoBehaviour {
         }
     }
 
-
+    public void InitFollowCamera(GameObject myPlayer)
+    {
+        GetComponent<SmoothFollow>().InitFollow(myPlayer.transform, Camera.main.transform);
+    }
 
     public void cameraReset() {
        mainCamera.transform.position= myHero.transform.position+new Vector3(-6, 8, 0);
@@ -150,7 +162,7 @@ public class FightScene : MonoBehaviour {
 
     void OnDestroy()
     {
-        Screen.SetResolution(1024, 768, false);
+        //Screen.SetResolution(1024, 768, false);
     }
 
     void OnApplicationQuit()

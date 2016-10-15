@@ -11,14 +11,16 @@ public class MainScene : MonoBehaviour {
     public Text tex;
     public Text btnTex;
     public GameObject matchWindow;
-	void Start () {
+	IEnumerator Start () {
         //   DisnableUtil.disnable(1024, 768);
+
+	    yield return null;
 
         if (GameData.user == null)
         {
             NetWorkScript.Instance.write(Protocol.TYPE_USER, 0, UserProtocol.GET_CREQ, null);
         }
-        return;
+        yield break;
 
         matchWindow.SetActive(false);
         refreshMain();

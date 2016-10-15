@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 using UnityStandardAssets.CrossPlatformInput;
 
 public class TiltTestScript : MonoBehaviour
@@ -14,7 +15,12 @@ public class TiltTestScript : MonoBehaviour
 
     void OnGUI()
     {
-        GUILayout.Label("                     InputMousePos : " + msg.ToString());
+        //GUILayout.Label("                     InputMousePos : " + msg.ToString());
+        if (GUILayout.Button("Load"))
+        {
+            SceneManager.LoadScene(3);
+            //Application.LoadLevel(3);
+        }
     }
 
 }
