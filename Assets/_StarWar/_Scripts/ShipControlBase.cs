@@ -1,21 +1,34 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 public class ShipControlBase : MonoBehaviour
 {
-    #region ===字段===
 
-    #endregion
+    private void OnMouseDown()
+    {
+        SignalMgr.OnShipSelected.Invoke(this);
 
-    #region ===属性===
 
-    #endregion
+    }
 
-    #region ===Unity事件=== 快捷键： Ctrl + Shift + M /Ctrl + Shift + Q  实现
+    private void OnEnable()
+    {
+        SignalMgr.OnShipSelected.AddListener(OnShipSelected);
+    }
 
-    #endregion
+    private void OnDisable()
+    {
+        SignalMgr.OnShipSelected.RemoveListener(OnShipSelected);
+    }
 
-    #region ===方法===
+    private void OnDestroy()
+    {
+        SignalMgr.OnShipSelected.RemoveListener(OnShipSelected);
+    }
 
-    #endregion
+    private void OnShipSelected(ShipControlBase ship)
+    {
+        transform.localScale = ship == this ? Vector3.one*1.3f : Vector3.one;
+    }
 }
