@@ -10,4 +10,7 @@ public class Tags
 
     public const string FriendHero = "friendHero";
     public const string EnemyHero = "enemyHero";
+
+    public const string VisibleLayer = "visible";
+    public const string DisibleLayer = "disible";
 }

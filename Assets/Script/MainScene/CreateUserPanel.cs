@@ -26,4 +26,9 @@ public class CreateUserPanel : MonoBehaviour {
         cbtn.enabled = false;
         NetWorkScript.Instance.write(Protocol.TYPE_USER, 0, UserProtocol.CREATE_CREQ, nameField.text);
     }
+
+    public void AutoCreate(string name)
+    {
+        NetWorkScript.Instance.write(Protocol.TYPE_USER, 0, UserProtocol.CREATE_CREQ, name);
+    }
 }

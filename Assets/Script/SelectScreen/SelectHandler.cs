@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using OneByOne;
+using UnityEngine.SceneManagement;
 
 public class SelectHandler : MonoBehaviour, IHandler
 {
@@ -22,7 +23,7 @@ public class SelectHandler : MonoBehaviour, IHandler
                 AutoReady(model.getMessage<SelectModel>());
                 break;
             case SelectProtocol.ROOM_DESTORY_BRO:
-                Application.LoadLevel(1);
+                SceneManager.LoadScene(1);
                 break;
             case SelectProtocol.SELECT_SRES:
                 GameData.errors.Add(new ErrorModel("选择角色失败，请重新选择"));
@@ -33,8 +34,7 @@ public class SelectHandler : MonoBehaviour, IHandler
                 break;
             case SelectProtocol.START_FIGHT_BRO:
                 //SendMessage("activeMask");
-                Debug.Log("Join scene 3");
-                Application.LoadLevelAsync(3);
+                SceneManager.LoadSceneAsync(3);
                 break;
         }
     }

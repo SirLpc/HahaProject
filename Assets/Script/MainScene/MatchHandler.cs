@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using OneByOne;
+using UnityEngine.SceneManagement;
 
 public class MatchHandler : MonoBehaviour,IHandler {
 
@@ -8,7 +9,7 @@ public class MatchHandler : MonoBehaviour,IHandler {
     {
         switch (model.command) { 
             case MatchProtocol.ENTER_SELECT_BRO:
-                Application.LoadLevel(2);
+                SceneManager.LoadScene(2);
                 break;
         }
     }

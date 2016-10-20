@@ -6,15 +6,10 @@ using UnityEngine;
 public static class LocalPlayerPrefabs
 {
 
-#if UNITY_EDITOR
+#if (UNITY_EDITOR || UNITY_ANDROID)
     private const string UIDKEY = "UIDKEY";
     private const string UPWDKEY = "UPWDKEY";
     private const string UNAMEKEY = "UNAMEKEY";
-#else
-    private const string UIDKEY = "UIDKEY1";
-    private const string UPWDKEY = "UPWDKEY1";
-    private const string UNAMEKEY = "UNAMEKEY1";
-#endif
 
     public static string GetId()
     {
@@ -47,5 +42,46 @@ public static class LocalPlayerPrefabs
     {
         return PlayerPrefs.GetString(UNAMEKEY);
     }
+
+#else
+    private static string UIDKEY = string.Empty;
+    private static string UPWDKEY = string.Empty;
+    private static string UNAMEKEY = string.Empty;
+
+    public static string GetId()
+    {
+        string id = UIDKEY;
+        if (string.IsNullOrEmpty(id))
+        {
+            id = string.Format("UID{0}", Random.Range(0, 10000).ToString("0000"));
+            UIDKEY = id;
+        }
+        return id;
+    }
+
+    public static string GetPwd()
+    {
+        string pwd = UPWDKEY;
+        if (string.IsNullOrEmpty(pwd))
+        {
+            pwd = string.Format("PWD{0}", Random.Range(0, 10000).ToString("0000"));
+            UPWDKEY = pwd;
+        }
+        return pwd;
+    }
+
+    public static void SetName(string name)
+    {
+        UPWDKEY = name;
+    }
+
+    public static string GetName()
+    {
+        return UNAMEKEY;
+    }
+#endif
+
+
+
 }
 

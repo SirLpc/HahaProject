@@ -14,8 +14,10 @@ public class GolbalUtil : MonoBehaviour
 
     private void Awake()
     {
-        GameObject.DontDestroyOnLoad(this);
+        Application.targetFrameRate = 45;
         Application.runInBackground = true;
+
+        GameObject.DontDestroyOnLoad(this);
     }
 
 	#endregion

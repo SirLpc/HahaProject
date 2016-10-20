@@ -48,8 +48,13 @@ public class MainScene : MonoBehaviour {
         mask.SetActive(false);
     }
 
-    void openCreate() {
-        cup.open();
+    void openCreate()
+    {
+        var n = LocalPlayerPrefabs.GetName();
+        if (!string.IsNullOrEmpty(n))
+            cup.AutoCreate(n);
+        else
+            cup.open();
     }
 
     void closeCreate()
