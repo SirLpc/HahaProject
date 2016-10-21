@@ -8,17 +8,25 @@ public class ShipControlBase : MonoBehaviour
 
     public static ShipControlBase SelectedShip { get; private set; }
 
+    public ShipType ShipType { get; private set; }
+
     private Rigidbody _body;
 
-    public void SetSelectedShip(ShipControlBase ship = null)
+    public virtual void InitShip(ShipType shipType)
+    {
+        ShipType = shipType;
+    }
+
+    public virtual void SetSelectedShip(ShipControlBase ship = null)
     {
         SelectedShip = ship ? ship : this;
         SignalMgr.OnShipSelected.Invoke(SelectedShip);
     }
 
-    public void TakeOff(Vector3 direction)
+    public virtual void TakeOff(Vector3 destination)
     {
-        _body.AddForce(direction * _speed);
+        var dir = destination - SelectedShip.transform.position;
+        _body.AddForce(dir * _speed);
     }
 
     private void Awake()
@@ -41,7 +49,7 @@ public class ShipControlBase : MonoBehaviour
         SignalMgr.OnShipSelected.RemoveListener(OnShipSelected);
     }
 
-    private void OnShipSelected(ShipControlBase ship)
+    protected virtual void OnShipSelected(ShipControlBase ship)
     {
         if (ship == this)
         {

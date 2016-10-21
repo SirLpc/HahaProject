@@ -5,8 +5,6 @@ public class ShipSpawner : MonoBehaviour
 {
 	#region ===字段===
 
-
-
 	#endregion
 
 	#region ===属性===

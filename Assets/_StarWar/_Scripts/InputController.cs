@@ -48,8 +48,7 @@ public class InputController : MonoBehaviour
             if (hit.transform == _transform)
             {
                 var tPos = new Vector3(hit.point.x, hit.point.y, 0);
-                var dir = tPos - ShipControlBase.SelectedShip.transform.position;
-                ShipControlBase.SelectedShip.TakeOff(dir);
+                ShipControlBase.SelectedShip.TakeOff(tPos);
             }
             else
             {
