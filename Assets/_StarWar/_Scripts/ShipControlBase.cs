@@ -4,17 +4,22 @@ using UnityEngine.Events;
 
 public class ShipControlBase : MonoBehaviour
 {
-    [SerializeField] private float _speed = 0.00001f;
 
     public static ShipControlBase SelectedShip { get; private set; }
 
-    public ShipType ShipType { get; private set; }
+    public ShipType ShipType { get; protected set; }
+    public ShipState ShipState { get; protected set; }
 
-    private Rigidbody _body;
+    protected float _speed = 0.00001f;
+
+    protected Rigidbody _body;
+    protected Transform _transform;
+    protected Collider _touchCollider;
 
     public virtual void InitShip(ShipType shipType)
     {
         ShipType = shipType;
+        ShipState = ShipState.INBASE;
     }
 
     public virtual void SetSelectedShip(ShipControlBase ship = null)
@@ -25,13 +30,17 @@ public class ShipControlBase : MonoBehaviour
 
     public virtual void TakeOff(Vector3 destination)
     {
-        var dir = destination - SelectedShip.transform.position;
+        var dir = (destination - SelectedShip.transform.position).normalized;
         _body.AddForce(dir * _speed);
+
+        ShipState = ShipState.FLYING;
     }
 
-    private void Awake()
+    protected virtual void Awake()
     {
         _body = GetComponent<Rigidbody>();
+        _transform = transform;
+        _touchCollider = GetComponent<Collider>();
     }
 
     private void OnEnable()
@@ -54,9 +63,9 @@ public class ShipControlBase : MonoBehaviour
         if (ship == this)
         {
             ShipControlBase.SelectedShip = this;
-            transform.localScale = Vector3.one*1.3f;
+            _transform.localScale = Vector3.one*1.3f;
         }
         else
-            transform.localScale = Vector3.one;
+            _transform.localScale = Vector3.one;
     }
 }
