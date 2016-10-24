@@ -28,9 +28,9 @@ public class AttackShipController : ShipControlBase
 
     #region ===方法===
 
-    public override void InitShip(ShipType shipType)
+    public override void InitShip(ShipType shipType, SpacePort spawnPort)
     {
-        base.InitShip(shipType);
+        base.InitShip(shipType, spawnPort);
         _moveCollider.enabled = false;
         _eyeTrigger.enabled = false;
     }

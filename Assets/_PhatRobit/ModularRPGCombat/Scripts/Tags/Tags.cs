@@ -13,4 +13,6 @@ public class Tags
 
     public const string VisibleLayer = "visible";
     public const string DisibleLayer = "disible";
+
+    public const string AttackTriggerName = "AttackTrigger_NR";
 }

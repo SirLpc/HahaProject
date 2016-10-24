@@ -26,9 +26,9 @@ class DefenseShipController : ShipControlBase
         _defenseRangeTr = _defenseRangeCollider.transform;
     }
 
-    public override void InitShip(ShipType shipType)
+    public override void InitShip(ShipType shipType, SpacePort spawnPort)
     {
-        base.InitShip(shipType);
+        base.InitShip(shipType, spawnPort);
         _defenseRangeCollider.enabled = false;
         _stopStartPosSetted = false;
         _defenseRangeTr.localPosition = Vector3.zero;

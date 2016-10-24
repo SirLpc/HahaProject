@@ -16,10 +16,13 @@ public class ShipControlBase : MonoBehaviour
     protected Transform _transform;
     protected Collider _touchCollider;
 
-    public virtual void InitShip(ShipType shipType)
+    private SpacePort _spawnPort = null;
+
+    public virtual void InitShip(ShipType shipType, SpacePort spawnPort)
     {
         ShipType = shipType;
         ShipState = ShipState.INBASE;
+        _spawnPort = spawnPort;
     }
 
     public virtual void SetSelectedShip(ShipControlBase ship = null)
@@ -35,6 +38,7 @@ public class ShipControlBase : MonoBehaviour
 
         _touchCollider.enabled = false;
         _transform.localScale = Vector3.one;
+        _transform.parent = null;
 
         ShipState = ShipState.FLYING;
     }

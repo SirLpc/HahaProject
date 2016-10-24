@@ -1,26 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ShipEye : MonoBehaviour
+public class ShipEyeBase : MonoBehaviour
 {
-    private int visibleLayer;
-    private int disibleLayer;
+    [SerializeField]
+    protected GameObject _render;
+
+    protected int _visibleLayer;
+    protected int _disibleLayer;
 
     private void Awake()
     {
-        visibleLayer = LayerMask.NameToLayer(Tags.VisibleLayer);
-        disibleLayer = LayerMask.NameToLayer(Tags.DisibleLayer);
+        _visibleLayer = LayerMask.NameToLayer(Tags.VisibleLayer);
+        _disibleLayer = LayerMask.NameToLayer(Tags.DisibleLayer);
     }
 
-    public void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.gameObject.layer == visibleLayer)
-            other.gameObject.layer = visibleLayer;
-    }
-
-    public void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.layer == visibleLayer)
-            other.gameObject.layer = disibleLayer;
-    }
+ 
 }

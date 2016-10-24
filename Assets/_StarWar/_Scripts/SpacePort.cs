@@ -22,12 +22,18 @@ public class SpacePort : MonoBehaviour
 
     private void Start()
     {
-        InvokeRepeating("SpawnRandomShip", 0, _spawnInterval);
+        SpawnRandomShip();
     }
 
     #endregion
 
     #region ===方法===
+
+    public void OnShipTakeOff()
+    {
+        _ship = null;
+        Invoke("SpawnRandomShip", _spawnInterval);
+    }
 
     private void SpawnRandomShip()
     {
@@ -47,7 +53,7 @@ public class SpacePort : MonoBehaviour
         s.SetParent(transform, false);
         s.position = new Vector3(s.position.x, s.position.y, 0);
         _ship = s.GetComponent<ShipControlBase>();
-        _ship.InitShip(type);
+        _ship.InitShip(type, this);
     }
 
     #endregion

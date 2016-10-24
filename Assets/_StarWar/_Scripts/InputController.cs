@@ -43,19 +43,22 @@ public class InputController : MonoBehaviour
     {
         RaycastHit hit;
         Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit))
+        if (Physics.Raycast(ray, out hit, 1<<12))
         {
             if (hit.transform.CompareTag(Tags.EnemyHero))
                 return;
 
             if (hit.transform == _transform)
             {
+                if (ShipControlBase.SelectedShip == null)
+                    return;
+
                 var tPos = new Vector3(hit.point.x, hit.point.y, 0);
                 ShipControlBase.SelectedShip.TakeOff(tPos);
             }
             else
             {
-                var scb = hit.transform.GetComponent<ShipControlBase>();
+                var scb = hit.transform.root.GetComponent<ShipControlBase>();
                 if(scb != null)
                     scb.SetSelectedShip();
             }
