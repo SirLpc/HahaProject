@@ -45,6 +45,9 @@ public class InputController : MonoBehaviour
         Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hit))
         {
+            if (hit.transform.CompareTag(Tags.EnemyHero))
+                return;
+
             if (hit.transform == _transform)
             {
                 var tPos = new Vector3(hit.point.x, hit.point.y, 0);

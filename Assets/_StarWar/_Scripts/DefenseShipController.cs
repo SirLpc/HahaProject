@@ -45,7 +45,6 @@ class DefenseShipController : ShipControlBase
         {
             _stopEndPos = destination;
             base.TakeOff(_stopStartPos);
-            _touchCollider.enabled = false;
             _stopStartPosSetted = false;
         }
     }

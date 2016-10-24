@@ -33,6 +33,9 @@ public class ShipControlBase : MonoBehaviour
         var dir = (destination - SelectedShip.transform.position).normalized;
         _body.AddForce(dir * _speed);
 
+        _touchCollider.enabled = false;
+        _transform.localScale = Vector3.one;
+
         ShipState = ShipState.FLYING;
     }
 
@@ -68,4 +71,5 @@ public class ShipControlBase : MonoBehaviour
         else
             _transform.localScale = Vector3.one;
     }
+
 }

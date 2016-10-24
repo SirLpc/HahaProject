@@ -14,7 +14,7 @@ public class ShipEye : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.gameObject.layer == disibleLayer)
+        if (other.gameObject.gameObject.layer == visibleLayer)
             other.gameObject.layer = visibleLayer;
     }
 
