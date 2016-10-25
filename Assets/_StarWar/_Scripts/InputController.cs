@@ -58,7 +58,7 @@ public class InputController : MonoBehaviour
             }
             else
             {
-                var scb = hit.transform.root.GetComponent<ShipControlBase>();
+                var scb = hit.transform.GetComponent<ShipControlBase>();
                 if(scb != null)
                     scb.SetSelectedShip();
             }

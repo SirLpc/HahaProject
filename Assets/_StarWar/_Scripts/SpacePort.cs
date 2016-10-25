@@ -40,7 +40,8 @@ public class SpacePort : MonoBehaviour
         if (_ship != null)
             return;
 
-        var ran = Random.Range(0, _shipPref.Length);
+        //var ran = Random.Range(0, _shipPref.Length);
+        var ran = 0;
         SpawnShip((ShipType)ran);
     }
 

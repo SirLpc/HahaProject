@@ -26,9 +26,9 @@ class DefenseShipController : ShipControlBase
         _defenseRangeTr = _defenseRangeCollider.transform;
     }
 
-    public override void InitShip(ShipType shipType, SpacePort spawnPort)
+    public override void InitShip(ShipType shipType, SpacePort spawnPort, bool isEnemy = false)
     {
-        base.InitShip(shipType, spawnPort);
+        base.InitShip(shipType, spawnPort, isEnemy);
         _defenseRangeCollider.enabled = false;
         _stopStartPosSetted = false;
         _defenseRangeTr.localPosition = Vector3.zero;
@@ -54,6 +54,16 @@ class DefenseShipController : ShipControlBase
         base.OnShipSelected(ship);
         if (ship != this)
             _stopStartPosSetted = false;
+    }
+
+    protected override void InitEnemy()
+    {
+        base.InitEnemy();
+    }
+
+    protected override void InitFriend()
+    {
+        base.InitFriend();
     }
 
     private void StopShip()
