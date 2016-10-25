@@ -6,7 +6,7 @@ class ShipVisibleEye : ShipEyeBase
 {
     public void OnTriggerEnter(Collider other)
     {
-        if (_render.name.Equals(Tags.FriendHero))
+        if (_renderTr.name.Equals(Tags.FriendHero))
             return;
 
         //if (other.gameObject.gameObject.layer == _disibleLayer)
@@ -19,7 +19,7 @@ class ShipVisibleEye : ShipEyeBase
 
     public void OnTriggerExit(Collider other)
     {
-        if (_render.name.Equals(Tags.FriendHero))
+        if (_renderTr.name.Equals(Tags.FriendHero))
             return;
 
         //if (other.gameObject.layer == _visibleLayer)

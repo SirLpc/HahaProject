@@ -8,7 +8,7 @@ class ShipDisibleEye : ShipEyeBase
     public void ShowShip()
     {
         _inEyeShip++;
-        _render.layer = _visibleLayer;
+        ShowAllRender(true);
     }
 
     public void HideShip()
@@ -17,7 +17,23 @@ class ShipDisibleEye : ShipEyeBase
         if (_inEyeShip < 0)
             _inEyeShip = 0;
         if (_inEyeShip == 0)
-            _render.layer = _disibleLayer;
+            ShowAllRender(false);
+    }
+
+    private void ShowAllRender(bool show)
+    {
+        _renderTr.gameObject.layer = show ? _visibleLayer : _disibleLayer;
+        ShowRender(_renderTr, show);
+    }
+
+    private void ShowRender(Transform tr, bool show)
+    {
+        for (int i = 0; i < tr.childCount; i++)
+        {
+            var child = tr.GetChild(i);
+           child.gameObject.layer = show ? _visibleLayer : _disibleLayer;
+            ShowRender(child, show);
+        }
     }
 
 }

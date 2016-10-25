@@ -4,7 +4,7 @@ using System.Collections;
 public class ShipEyeBase : MonoBehaviour
 {
     [SerializeField]
-    protected GameObject _render;
+    protected Transform _renderTr;
 
     protected int _visibleLayer;
     protected int _disibleLayer;
