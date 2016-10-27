@@ -6,7 +6,6 @@ public class AttackShipController : ShipControlBase
 {
     #region ===字段===
 
-
     [SerializeField]
     private Collider _moveCollider ;
     [SerializeField]
@@ -17,6 +16,7 @@ public class AttackShipController : ShipControlBase
     [SerializeField]
     private GameObject _bulletPref;
 
+    private IEnumerator _attakEnumerator;
 
     #endregion
 
@@ -52,6 +52,11 @@ public class AttackShipController : ShipControlBase
 
     public void ReadyToAttack(Transform target)
     {
+        _continueDir = _body.velocity.normalized;
+        _body.velocity = Vector3.zero;
+
+        ShipState = ShipState.ATTACKING;
+
         var dir = (target.position - transform.position).normalized;
         var cross = Vector3.Cross(dir, transform.up);
         var angle = Vector3.Angle(dir, transform.up);
@@ -59,7 +64,8 @@ public class AttackShipController : ShipControlBase
             angle *= -1;
         transform.Rotate(0, 0, angle);
 
-        StartCoroutine(RepeatAttack(target));
+        _attakEnumerator = RepeatAttack(target);
+        StartCoroutine(_attakEnumerator);
     }
 
     private IEnumerator RepeatAttack(Transform target)
@@ -77,9 +83,14 @@ public class AttackShipController : ShipControlBase
     {
         GameObject bullet = (GameObject)Instantiate(_bulletPref, transform.position, transform.rotation);
         var bs = bullet.GetComponent<SpaceBullet>();
-        bs.Init(target);
-        _continueDir = _body.velocity;
-        _body.velocity = Vector3.zero;
+        bs.Init(target, OnEnemyDestroyed);
+    }
+
+    private void OnEnemyDestroyed()
+    {
+        StopCoroutine(_attakEnumerator);
+        _body.AddForce(_continueDir * _speed);
+        ShipState = ShipState.FLYING;
     }
 
     protected override void InitEnemy()
