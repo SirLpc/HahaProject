@@ -7,13 +7,6 @@ public class AttackShipController : ShipControlBase
     #region ===字段===
 
     [SerializeField]
-    private Collider _moveCollider ;
-    [SerializeField]
-    private Collider _eyeTrigger;
-    [SerializeField]
-    private Transform _render;
-
-    [SerializeField]
     private GameObject _bulletPref;
 
     private IEnumerator _attakEnumerator;
@@ -35,29 +28,24 @@ public class AttackShipController : ShipControlBase
 
     #region ===方法===
 
-    public override void InitShip(ShipType shipType, SpacePort spawnPort, bool isEnemy = false)
-    {
-        base.InitShip(shipType, spawnPort, isEnemy);
-        //todo 打开注释，因为这是为测试留的
-        //_moveCollider.enabled = false;
-        _eyeTrigger.enabled = false;
-    }
+    //public override void InitShip(ShipType shipType, SpacePort spawnPort, bool isEnemy)
+    //{
+    //    base.InitShip(shipType, spawnPort, isEnemy);
+    //}
 
-    public override void TakeOff(Vector3 destination)
-    {
-        base.TakeOff(destination);
-        _moveCollider.enabled = true;
-        _eyeTrigger.enabled = true;
-    }
+    //public override void TakeOff(Vector3 destination)
+    //{
+    //    base.TakeOff(destination);
+    //}
 
-    public void ReadyToAttack(Transform target)
+    public void ReadyToAttack(ShipStateBase target)
     {
         _continueDir = _body.velocity.normalized;
         _body.velocity = Vector3.zero;
 
         ShipState = ShipState.ATTACKING;
 
-        var dir = (target.position - transform.position).normalized;
+        var dir = (target.transform.position - transform.position).normalized;
         var cross = Vector3.Cross(dir, transform.up);
         var angle = Vector3.Angle(dir, transform.up);
         if (cross.z > 0f)
@@ -68,18 +56,25 @@ public class AttackShipController : ShipControlBase
         StartCoroutine(_attakEnumerator);
     }
 
-    private IEnumerator RepeatAttack(Transform target)
+    private IEnumerator RepeatAttack(ShipStateBase target)
     {
         Attack(target);
 
         while (target)
         {
             yield return new WaitForSeconds(1f);
+
+            if (!target.IsAlive)
+            {
+                OnEnemyDestroyed();
+                yield break;
+            }
+
             Attack(target);
         }
     }
 
-    private void Attack(Transform target)
+    private void Attack(ShipStateBase target)
     {
         GameObject bullet = (GameObject)Instantiate(_bulletPref, transform.position, transform.rotation);
         var bs = bullet.GetComponent<SpaceBullet>();
@@ -93,7 +88,7 @@ public class AttackShipController : ShipControlBase
         ShipState = ShipState.FLYING;
     }
 
-    protected override void InitEnemy()
+    public override void InitEnemy()
     {
         base.InitEnemy();
 
@@ -101,7 +96,7 @@ public class AttackShipController : ShipControlBase
         sve.Init(_render);
     }
 
-    protected override void InitFriend()
+    public override void InitFriend()
     {
         base.InitFriend();
 

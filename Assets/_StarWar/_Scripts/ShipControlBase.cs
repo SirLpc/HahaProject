@@ -2,14 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine.Events;
 
-public class ShipControlBase : MonoBehaviour
+public class ShipControlBase : MonoBehaviour, ITeam
 {
-    public bool IsEnemy = false;
+    //todo kill test field
+    public bool _isEnemy;
+    public bool IsEnemy { get; set; }
 
     public static ShipControlBase SelectedShip { get; private set; }
 
     public ShipType ShipType { get; protected set; }
     public ShipState ShipState { get; protected set; }
+
+    [SerializeField]
+    protected Collider _moveCollider;
+    [SerializeField]
+    protected Transform _render;
+    [SerializeField]
+    protected Collider _eyeTrigger;
 
     protected float _speed = 0.00001f;
 
@@ -23,30 +32,35 @@ public class ShipControlBase : MonoBehaviour
     //todo kill test scripts
     private void Start()
     {
-        if (IsEnemy)
+        if (_isEnemy)
         {
             InitShip(ShipType.ATTACK, null, true);
         }
     }
 
-    public virtual void InitShip(ShipType shipType, SpacePort spawnPort, bool isEnemy = false)
+    public virtual void InitShip(ShipType shipType, SpacePort spawnPort, bool isEnemy)
     {
         IsEnemy = isEnemy;
         ShipType = shipType;
         ShipState = ShipState.INBASE;
         _spawnPort = spawnPort;
+
+        //todo 打开注释，因为这是为测试留的
+        //_moveCollider.enabled = false;
+        _eyeTrigger.enabled = false;
+
         if (isEnemy)
             InitEnemy();
         else
             InitFriend();
     }
 
-    protected virtual void InitEnemy()
+    public virtual void InitEnemy()
     {
         gameObject.tag = Tags.EnemyHero;
     }
 
-    protected virtual void InitFriend()
+    public virtual void InitFriend()
     {
         gameObject.tag = Tags.FriendHero;
     }
@@ -66,7 +80,12 @@ public class ShipControlBase : MonoBehaviour
         _transform.localScale = Vector3.one;
         _transform.parent = null;
 
+        _moveCollider.enabled = true;
+        _eyeTrigger.enabled = true;
+
         ShipState = ShipState.FLYING;
+
+        _spawnPort.OnShipTakeOff();
     }
 
     protected virtual void Awake()

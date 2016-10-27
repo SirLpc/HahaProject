@@ -14,10 +14,10 @@ public class SpaceBullet : MonoBehaviour {
         _body = GetComponent<Rigidbody>();
     }
 
-	public void Init (Transform target, UnityAction onEnemyDestroyed)
+	public void Init (ShipStateBase target, UnityAction onEnemyDestroyed)
 	{
 	    _onEnemyDestroyed = onEnemyDestroyed;
-        var dir = (target.position - transform.position).normalized;
+        var dir = (target.transform.position - transform.position).normalized;
         _body.AddForce(dir * _speed);
 	}
 
@@ -32,7 +32,7 @@ public class SpaceBullet : MonoBehaviour {
 
             if (state.IsAlive)
             {
-                if(state.TakeDamage(0) && _onEnemyDestroyed != null)
+                if(state.TakeDamage(10) && _onEnemyDestroyed != null)
                     _onEnemyDestroyed.Invoke();
             }
             else if(_onEnemyDestroyed != null)

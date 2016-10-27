@@ -6,7 +6,8 @@ class ShipVisibleEye : ShipEyeBase
 {
     public void OnTriggerEnter(Collider other)
     {
-        if (other.transform.root.CompareTag(Tags.EnemyHero))
+        var root = other.transform.root;
+        if (root.CompareTag(Tags.EnemyHero))
         {
             var sde = other.GetComponent<ShipDisibleEye>();
             if (sde)
@@ -14,7 +15,11 @@ class ShipVisibleEye : ShipEyeBase
                 sde.ShowShip();
                 var atkShip = _ship as AttackShipController;
                 if (atkShip)
-                    atkShip.ReadyToAttack(other.transform);
+                {
+                    var ssb = root.GetComponent<ShipStateBase>();
+                    if(ssb)
+                        atkShip.ReadyToAttack(ssb);
+                }
             }
         }
     }
