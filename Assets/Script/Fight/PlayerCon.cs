@@ -1,16 +1,20 @@
-﻿using UnityEngine;
+﻿#define USING_RPG 
+
+using UnityEngine;
 using System.Collections;
 using OneByOne;
+using System;
 
 public class PlayerCon : MonoBehaviour
 {
 
     public GameObject EyeRange;
     public GameObject hpObj;
+#if !USING_RPG
     public MrpgcKeyboardMovementController moveController;
     public PlayerCombatController combatController;
     public PlayerStatController stateController;
-
+#endif
     protected NavMeshAgent agent=null;
 
     protected Animator anim;
@@ -40,7 +44,9 @@ public class PlayerCon : MonoBehaviour
 
     public void StartMove(MoveDTO dto)
     {
+        #if !USING_RPG
         moveController.NetWorkInputGet(dto);
+#endif
         return;
 
         myState = PlayerState.RUN;
@@ -115,7 +121,9 @@ public class PlayerCon : MonoBehaviour
         if (data.hp < 0) data.hp = 0;
         if (data.hp > data.maxHp) data.hp = data.maxHp;
 
+           #if !USING_RPG
         stateController.TakeDamage(value);
+#endif
         //hpObj.GetComponent<HpProcess>().hpChange((float)data.hp/data.maxHp);
     }
 }

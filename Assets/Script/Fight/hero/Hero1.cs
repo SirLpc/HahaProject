@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#define USING_RPG 
+
+using UnityEngine;
 using System.Collections;
 
 public class Hero1:PlayerCon,IHero {
@@ -11,7 +13,9 @@ public class Hero1:PlayerCon,IHero {
 
     public void attack(GameObject[] targets)
     {
+        #if !USING_RPG
         combatController.NetWorkAttackGet();
+#endif
         return;
 
         if (PlayerState.RUN == myState)
@@ -60,7 +64,9 @@ public class Hero1:PlayerCon,IHero {
     public void setData(OneByOne.FightPlayerModel model)
     {
         base.Data = model;
+        #if !USING_RPG
         base.stateController.NetSpawn(model);
+#endif
         IsSelf = model.id == GameData.user.id;
     }
 

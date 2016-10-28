@@ -43,8 +43,10 @@ public class InputController : MonoBehaviour
     {
         RaycastHit hit;
         Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit, 1<<12))
+        if (Physics.Raycast(ray, out hit, 30, 1 << 12))
         {
+            Debug.Log("hit" + hit.transform.gameObject.layer);
+
             if (hit.transform.CompareTag(Tags.EnemyHero))
                 return;
 
