@@ -41,16 +41,17 @@ public class AttackShipController : ShipControlBase
     public void ReadyToAttack(ShipStateBase target)
     {
         _continueDir = _body.velocity.normalized;
+        _continueQua = _transform.rotation;
         _body.velocity = Vector3.zero;
 
         ShipState = ShipState.ATTACKING;
 
-        var dir = (target.transform.position - transform.position).normalized;
-        var cross = Vector3.Cross(dir, transform.up);
-        var angle = Vector3.Angle(dir, transform.up);
+        var dir = (target.transform.position - _transform.position).normalized;
+        var cross = Vector3.Cross(dir, _transform.up);
+        var angle = Vector3.Angle(dir, _transform.up);
         if (cross.z > 0f)
             angle *= -1;
-        transform.Rotate(0, 0, angle);
+        _transform.Rotate(0, 0, angle);
 
         _attakEnumerator = RepeatAttack(target);
         StartCoroutine(_attakEnumerator);
@@ -76,7 +77,7 @@ public class AttackShipController : ShipControlBase
 
     private void Attack(ShipStateBase target)
     {
-        GameObject bullet = (GameObject)Instantiate(_bulletPref, transform.position, transform.rotation);
+        GameObject bullet = (GameObject)Instantiate(_bulletPref, _transform.position, _transform.rotation);
         var bs = bullet.GetComponent<SpaceBullet>();
         bs.Init(target, OnEnemyDestroyed);
     }
@@ -84,6 +85,7 @@ public class AttackShipController : ShipControlBase
     private void OnEnemyDestroyed()
     {
         StopCoroutine(_attakEnumerator);
+        _transform.rotation = _continueQua;
         _body.AddForce(_continueDir * _speed);
         ShipState = ShipState.FLYING;
     }

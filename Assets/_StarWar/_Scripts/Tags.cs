@@ -13,6 +13,11 @@ public class Tags
 
     public const string VisibleLayer = "visible";
     public const string DisibleLayer = "disible";
+    public const string TouchLayer = "Touch";
+    public const string ShipUnColLayer = "ShipUnCol";
+
+
+
 
     public const string AttackTriggerName = "AttackTrigger_NR";
 }

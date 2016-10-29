@@ -25,9 +25,14 @@ public class ShipControlBase : MonoBehaviour, ITeam
     protected Rigidbody _body;
     protected Transform _transform;
     protected Collider _touchCollider;
+
     protected Vector3 _continueDir;
+    protected Quaternion _continueQua;
 
     private SpacePort _spawnPort = null;
+
+    private int _touchLayer;
+    private int _shipUnColLayer;
 
     //todo kill test scripts
     private void Start()
@@ -44,6 +49,7 @@ public class ShipControlBase : MonoBehaviour, ITeam
         ShipType = shipType;
         ShipState = ShipState.INBASE;
         _spawnPort = spawnPort;
+        gameObject.layer = _touchLayer;
 
         //todo 打开注释，因为这是为测试留的
         //_moveCollider.enabled = false;
@@ -83,6 +89,8 @@ public class ShipControlBase : MonoBehaviour, ITeam
         _moveCollider.enabled = true;
         _eyeTrigger.enabled = true;
 
+        gameObject.layer = _shipUnColLayer;
+
         ShipState = ShipState.FLYING;
 
         _spawnPort.OnShipTakeOff();
@@ -93,6 +101,9 @@ public class ShipControlBase : MonoBehaviour, ITeam
         _body = GetComponent<Rigidbody>();
         _transform = transform;
         _touchCollider = GetComponent<Collider>();
+
+        _touchLayer = LayerMask.NameToLayer(Tags.TouchLayer);
+        _shipUnColLayer = LayerMask.NameToLayer(Tags.ShipUnColLayer);
     }
 
 

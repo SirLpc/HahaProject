@@ -29,7 +29,8 @@ class DefenseShipController : ShipControlBase
     public override void InitShip(ShipType shipType, SpacePort spawnPort, bool isEnemy)
     {
         base.InitShip(shipType, spawnPort, isEnemy);
-        _defenseRangeCollider.enabled = false;
+        //todo kill test script
+        //_defenseRangeCollider.enabled = false;
         _stopStartPosSetted = false;
         _defenseRangeTr.localPosition = Vector3.zero;
     }
