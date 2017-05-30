@@ -41,12 +41,15 @@ public class NetShipControllerView : thelab.mvc.View<SpaceApplication>
 
     [SerializeField]
     private ParticleFollow _particleFollow;
+    
+    public Transform ShipTransform { get; private set; }
 
     private void Awake()
     {
         tno = GetComponent<TNObject>();
 
         m_ship = GetComponentInChildren<SpaceshipController>();
+        ShipTransform = m_ship.transform;
         m_joystic = FindObjectOfType<ETCJoystick>();
         if (m_joystic == null)
             Debug.LogError("Joystick NOT found!!");

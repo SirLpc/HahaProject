@@ -6,7 +6,7 @@ public class SpaceNotifications
 
     public const string SpeedUp = "myship.speedup"; //bool enalbeSpeedUp
 
-
+    public const string CreatBullet = "bullet.creat";
 
 
 

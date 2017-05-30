@@ -30,6 +30,10 @@ public class SpaceController : Controller<SpaceApplication>
                 app.view.MyShip.SpeedUp((bool)p_data[0]);
                 break;
 
+            case SpaceNotifications.CreatBullet:
+                CreatBullet();
+                break;
+
             default:
                 break;
         }
@@ -45,17 +49,50 @@ public class SpaceController : Controller<SpaceApplication>
     private void CreatMyShip()
     {
         if (_channelID < 1) _channelID = TNManager.lastChannelID;
-        TNManager.Instantiate(_channelID, "CreateAtPosition", _shipPrefabPath, _persistent, transform.position, transform.rotation);
+        TNManager.Instantiate(_channelID, "CreateShipAtPosition", _shipPrefabPath, _persistent, transform.position, transform.rotation);
     }
 
     [RCC]
-    static GameObject CreateAtPosition(GameObject prefab, Vector3 pos, Quaternion rot)
+    static GameObject CreateShipAtPosition(GameObject prefab, Vector3 pos, Quaternion rot)
     {
         // Instantiate the prefab
         GameObject go = prefab.Instantiate();
 
         // Set the position and rotation based on the passed values
         Transform t = go.transform;
+        t.position = pos;
+        t.rotation = rot;
+        return go;
+    }
+    #endregion
+
+    #region CreatBullet
+    [SerializeField]
+    private string _bulletPrefabPath;
+
+    private float _lastFireTime = float.MinValue;
+    private float _fireInterval = .75f;
+
+    private void CreatBullet()
+    {
+        if (Time.time - _lastFireTime < _fireInterval)
+            return;
+        _lastFireTime = Time.time;
+
+        if (_channelID < 1) _channelID = TNManager.lastChannelID;
+        TNManager.Instantiate(_channelID, "CreateBulletAtPosition", _bulletPrefabPath, _persistent, app.view.MyShip.ShipTransform.position, app.view.MyShip.ShipTransform.rotation);
+    }
+
+    [RCC]
+    static GameObject CreateBulletAtPosition(GameObject prefab, Vector3 pos, Quaternion rot)
+    {
+        // Instantiate the prefab
+        GameObject go = prefab.Instantiate();
+
+        // Set the position and rotation based on the passed values
+        Transform t = go.transform;
+        //TODO 根据速度，改变子弹生成的初始位置 +30往前生成点
+        pos.z += 30f;
         t.position = pos;
         t.rotation = rot;
         return go;

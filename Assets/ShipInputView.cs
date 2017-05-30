@@ -6,11 +6,14 @@ using thelab.mvc;
 public class ShipInputView : View<SpaceApplication>
 {
 
-	
     public void OnClickSpeedUp(bool activeSpeedUp)
     {
         Notify(SpaceNotifications.SpeedUp, activeSpeedUp);
     }
 
+    public void OnClickFire()
+    {
+        Notify(SpaceNotifications.CreatBullet);
+    }
 
 }
