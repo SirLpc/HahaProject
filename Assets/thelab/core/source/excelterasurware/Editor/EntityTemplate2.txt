@@ -1,0 +1,14 @@
+﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+
+public class $ExcelData$ : ScriptableObject
+{	
+	public List<$ModelName$> list = new List<$ModelName$> ();
+
+	[System.SerializableAttribute]
+	public class $ModelName$
+	{
+		$Types$
+	}
+}
