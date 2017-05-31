@@ -80,7 +80,11 @@ public class SpaceController : Controller<SpaceApplication>
         _lastFireTime = Time.time;
 
         if (_channelID < 1) _channelID = TNManager.lastChannelID;
-        TNManager.Instantiate(_channelID, "CreateBulletAtPosition", _bulletPrefabPath, _persistent, app.view.MyShip.ShipTransform.position, app.view.MyShip.ShipTransform.rotation);
+        //TODO 根据速度，改变子弹生成的初始位置 +30往前生成点
+        var pos = app.view.MyShip.ShipTransform.position;
+        pos += app.view.MyShip.ShipTransform.forward * 20f;
+        var rot = app.view.MyShip.ShipTransform.rotation;
+        TNManager.Instantiate(_channelID, "CreateBulletAtPosition", _bulletPrefabPath, _persistent, pos, rot);
     }
 
     [RCC]
@@ -91,8 +95,6 @@ public class SpaceController : Controller<SpaceApplication>
 
         // Set the position and rotation based on the passed values
         Transform t = go.transform;
-        //TODO 根据速度，改变子弹生成的初始位置 +30往前生成点
-        pos.z += 30f;
         t.position = pos;
         t.rotation = rot;
         return go;
