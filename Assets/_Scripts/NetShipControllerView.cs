@@ -3,45 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using TNet;
 
+/// <summary>
+/// 可以通过
+/// 1. 减少发包率（意思就是 增大 sendInterval  发包间隔）
+/// 2. 增大 closeEnough 距离
+/// 3. 增大 normalLerpRate、fasterLerpRate 插值速率
+/// </summary>
 [RequireComponent(typeof(TNObject))]
 public class NetShipControllerView : thelab.mvc.View<SpaceApplication>
 {
-    /// <summary>
-    /// Maximum number of updates per second when synchronizing input axes.
-    /// The actual number of updates may be less if nothing is changing.
-    /// </summary>
-
-    [Range(1f, 20f)]
-    public float inputUpdates = 10f;
-
-    /// <summary>
-    /// Maximum number of updates per second when synchronizing the rigidbody.
-    /// </summary>
-
-    [Range(0.25f, 5f)]
-    public float rigidbodyUpdates = 1f;
-
-    [Range(1f, 20f)]
-    public float lerpRate = 15f;
-
-    /// <summary>
-    /// We want to cache the network object (TNObject) we'll use for network communication.
-    /// If the script was derived from TNBehaviour, this wouldn't have been necessary.
-    /// </summary>
-
-    [System.NonSerialized]
-    public TNObject tno;
-
-    private Vector4 mLastInput;
-    private float mLastInputSend = 0f;
-    private float mNextRB = 0f;
-
-    private SpaceshipController m_ship;
-    private ETCJoystick m_joystic;
+    private float lastSendTime = 0f;
+    private float sendInterval = 0.1f;
 
     [SerializeField]
+    private float lerpRate = 9.0f;
+
+
+    private Vector3 syncPos;
+    private float threshold = 0.5f;
+
+    private Quaternion syncRot;
+
+ 
+    private TNObject tno;
+    private SpaceshipController m_ship;
+    private ETCJoystick m_joystic;
+    [SerializeField]
     private ParticleFollow _particleFollow;
-    
     public Transform ShipTransform { get; private set; }
 
     private void Awake()
@@ -66,70 +54,32 @@ public class NetShipControllerView : thelab.mvc.View<SpaceApplication>
 
     private void Update()
     {
-        // Only the player that actually owns this car should be controlling it
-        if (!tno.isMine) return;
+        if (!tno.isMine)
+        {
+            ShipTransform.position = Vector3.Lerp(ShipTransform.position, syncPos, Time.deltaTime * lerpRate);
+            ShipTransform.rotation = Quaternion.Lerp(ShipTransform.rotation, syncRot, Time.deltaTime * lerpRate);
+            return;
+        };
 
         m_ship.Update_bynet();
-
-        //float time = Time.time;
-        //float delta = time - mLastInputSend;
-        //float delay = 1f / inputUpdates;
-
-        //// Don't send updates more than 20 times per second
-        //if (delta > 0.05f)
-        //{
-        //    // The closer we are to the desired send time, the smaller is the deviation required to send an update.
-        //    float threshold = Mathf.Clamp01(delta - delay) * 0.5f;
-
-        //    // If the deviation is significant enough, send the update to other players
-        //    if (Tools.IsNotEqual(mLastInput.x, m_ship.SmoothedInput.x, threshold) ||
-        //        Tools.IsNotEqual(mLastInput.y, m_ship.SmoothedInput.y, threshold) ||
-        //        Tools.IsNotEqual(mLastInput.z, m_ship.SmoothedInput.z, threshold) ||
-        //        Tools.IsNotEqual(mLastInput.w, m_ship.SmoothedInput.w, threshold))
-        //    {
-        //        mLastInputSend = time;
-        //        mLastInput = m_ship.SmoothedInput;
-        //        tno.Send("SetAxis", Target.OthersSaved, m_ship.SmoothedInput);
-        //    }
-        //}
-
-        //// Since the input is sent frequently, rigidbody only needs to be corrected every couple of seconds.
-        //// Faster-paced games will require more frequent updates.
-        //if (mNextRB < time)
-        //{
-        //    mNextRB = time + 1f / rigidbodyUpdates;
-        //    tno.Send("SetRB", Target.OthersSaved, m_ship.Rigidbody.position, m_ship.Rigidbody.rotation,
-        //        m_ship.Rigidbody.velocity, m_ship.Rigidbody.angularVelocity);
-        //}
-    }
-
-    private Vector3 targetPos;
-    private Quaternion targetRot;
-    private void FixedUpdate()
-    {
-        if(!tno.isMine)
+        if (Time.time - lastSendTime > sendInterval)
         {
-            m_ship.Rigidbody.position = Vector3.Lerp(m_ship.Rigidbody.position, targetPos, Time.deltaTime * lerpRate);
-            m_ship.Rigidbody.rotation = Quaternion.Lerp(m_ship.Rigidbody.rotation, targetRot, Time.deltaTime * lerpRate);
-            return;
+            tno.Send("SetRB", Target.OthersSaved, ShipTransform.position, ShipTransform.rotation);
+            lastSendTime = Time.time;
         }
-
-        tno.Send("SetRB", Target.OthersSaved, m_ship.Rigidbody.position, m_ship.Rigidbody.rotation);
     }
+
+    //private void FixedUpdate()
+    //{
+
+    //}
 
     private void LateUpdate()
     {
-        if (!tno.isMine) return;
-
-        m_ship.LateUpdate_bynet();
+        if (tno.isMine)
+            m_ship.LateUpdate_bynet();
     }
 
-    /// <summary>
-    /// RFC for the input will be called several times per second.
-    /// </summary>
-
-    [RFC]
-    private void SetAxis(Vector4 v) { m_ship.SmoothedInput = v; }
 
     /// <summary>
     /// RFC for the rigidbody will be called once per second by default.
@@ -138,10 +88,9 @@ public class NetShipControllerView : thelab.mvc.View<SpaceApplication>
     [RFC]
     private void SetRB(Vector3 pos, Quaternion rot)
     {
-        targetPos = pos;
-        targetRot = rot;
+        syncPos = pos;
+        syncRot = rot;
     }
-
 
     public void SpeedUp(bool enableSpeedUp)
     {

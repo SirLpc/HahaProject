@@ -71,7 +71,7 @@ public class SpaceController : Controller<SpaceApplication>
     private string _bulletPrefabPath;
 
     private float _lastFireTime = float.MinValue;
-    private float _fireInterval = .75f;
+    private float _fireInterval = .25f;
 
     private void CreatBullet()
     {
