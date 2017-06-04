@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TNet;
+using System;
 
 /// <summary>
 /// 可以通过
@@ -24,8 +25,8 @@ public class NetShipControllerView : thelab.mvc.View<SpaceApplication>
 
     private Quaternion syncRot;
 
- 
-    private TNObject tno;
+    [NonSerialized]
+    public TNObject tno;
     private SpaceshipController m_ship;
     private ETCJoystick m_joystic;
     [SerializeField]
@@ -41,6 +42,16 @@ public class NetShipControllerView : thelab.mvc.View<SpaceApplication>
         m_joystic = FindObjectOfType<ETCJoystick>();
         if (m_joystic == null)
             Debug.LogError("Joystick NOT found!!");
+    }
+
+    private void OnEnable()
+    {
+        TNManager.onSetPlayerData += OnSetPlayerData;
+    }
+
+    private void OnDisable()
+    {
+        TNManager.onSetPlayerData -= OnSetPlayerData;
     }
 
     private void Start()
@@ -80,6 +91,19 @@ public class NetShipControllerView : thelab.mvc.View<SpaceApplication>
             m_ship.LateUpdate_bynet();
     }
 
+    private void OnSetPlayerData(Player p, string path, DataNode node)
+    {
+        if (!p.Equals(TNManager.player))
+            return;
+
+        if (path != SpaceConsts.PlayerHpPath)
+            return;
+
+        var hp = TNManager.GetPlayerData<int>(SpaceConsts.PlayerHpPath);
+        Log("in view set player data" + hp);
+        if (hp <= 0)
+            gameObject.SetActive(false);
+    }
 
     /// <summary>
     /// RFC for the rigidbody will be called once per second by default.

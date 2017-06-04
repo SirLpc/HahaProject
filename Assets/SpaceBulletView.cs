@@ -26,14 +26,19 @@ public class SpaceBulletView : thelab.mvc.View<SpaceApplication>
         _body.AddForce(transform.forward.normalized * _speed);
 	}
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        var shipView = collision.transform.root.GetComponentInParent<NetShipControllerView>();
-        if (shipView)
-        {
 
+    private void OnTriggerEnter(Collider other)
+    {
+        var shipView = other.transform.root.GetComponentInParent<NetShipControllerView>();
+        if (shipView && !shipView.Equals(app.view.MyShip))
+        {
+            Log("collision ship");
+            Notify(SpaceNotifications.BulletAttakOn, shipView, 10);
+            _tno.DestroySelf();
         }
-        Destroy(this.gameObject);
     }
+
+
+
 
 }

@@ -19,5 +19,10 @@ public class SpaceView : thelab.mvc.View<SpaceApplication>
         ship.EnableParticaleFollow(isMyShip);
     }
 
+    public void AttakOn(NetShipControllerView ship, int damage)
+    {
+
+    }
+
 
 }

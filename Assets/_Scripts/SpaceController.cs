@@ -6,7 +6,20 @@ using TNet;
 public class SpaceController : Controller<SpaceApplication>
 {
 
+    private TNObject tno;
 
+    private SpaceShipCtr _ship;
+    public SpaceShipCtr Ship { get { return _ship = Assert(_ship); } }
+
+    private int _channelID = 0;
+    public int ChannelID { get { return _channelID; } }
+    private bool _persistent = false;
+    public bool Persistent { get { return _persistent; } }
+
+    private void Awake()
+    {
+        tno = GetComponent<TNObject>();
+    }
 
     private IEnumerator Start()
     {
@@ -14,8 +27,10 @@ public class SpaceController : Controller<SpaceApplication>
         while (TNManager.isJoiningChannel)
             yield return null;
 
-        CreatMyShip();
+        if (_channelID < 1) _channelID = TNManager.lastChannelID;
 
+        Ship.CreatMyShip();
+        
     }
 
     public override void OnNotification(string p_event, Object p_target, params object[] p_data)
@@ -34,37 +49,25 @@ public class SpaceController : Controller<SpaceApplication>
                 CreatBullet();
                 break;
 
+            case SpaceNotifications.BulletAttakOn:  //attacker called
+                var tagetShip = p_data[0] as NetShipControllerView;
+                tno.Send("TakeDamage", tagetShip.tno.ownerID, (int)p_data[1], app.view.MyShip.tno.ownerID);
+                break;
+
+            //case SpaceNotifications.ShipTakeDamage: //under attack called
+            //    var damage = (int)p_data[0];
+            //    var attackShip = p_data[1] as NetShipControllerView;
+
+            //    Ship.Damage(damage); 
+            //    break;
+
             default:
                 break;
         }
     }
 
 
-    #region CreatMyShip
-    private int _channelID = 0;
-    [SerializeField]
-    private string _shipPrefabPath;
-    private bool _persistent = false;
-
-    private void CreatMyShip()
-    {
-        if (_channelID < 1) _channelID = TNManager.lastChannelID;
-        TNManager.Instantiate(_channelID, "CreateShipAtPosition", _shipPrefabPath, _persistent, transform.position, transform.rotation);
-    }
-
-    [RCC]
-    static GameObject CreateShipAtPosition(GameObject prefab, Vector3 pos, Quaternion rot)
-    {
-        // Instantiate the prefab
-        GameObject go = prefab.Instantiate();
-
-        // Set the position and rotation based on the passed values
-        Transform t = go.transform;
-        t.position = pos;
-        t.rotation = rot;
-        return go;
-    }
-    #endregion
+ 
 
     #region CreatBullet
     [SerializeField]
@@ -100,5 +103,12 @@ public class SpaceController : Controller<SpaceApplication>
         return go;
     }
     #endregion
+
+
+    [TNet.RFC]
+    private void TakeDamage(int damage, int attackPlayerId)
+    {
+        Notify(SpaceNotifications.ShipTakeDamage, damage, attackPlayerId);
+    }
 
 }
