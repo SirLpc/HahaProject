@@ -6,6 +6,8 @@ public class SpaceshipController : MonoBehaviour
 {
 	private const float IdleCameraDistanceSmooth = 0.85f;
 	private static readonly Vector3[] RotationDirections = { Vector3.right, Vector3.up, Vector3.forward };
+    [SerializeField]
+    private Transform chackedTransform;
 	public Transform CachedTransform { get; private set; }
 
     private ETCJoystick m_joystic;
@@ -102,8 +104,9 @@ public class SpaceshipController : MonoBehaviour
 	{
 		RawInput = Vector4.zero;
 		SmoothedInput = Vector4.zero;
-		CachedTransform = transform;
-		m_idleCameraDistance = CameraOffsetVector.magnitude;
+        //CachedTransform = transform;
+        CachedTransform = chackedTransform;
+        m_idleCameraDistance = CameraOffsetVector.magnitude;
 		m_initialAvatarRotation = m_spaceship.Avatar.localRotation;
 
         m_camera.TargetCamera = Camera.main;

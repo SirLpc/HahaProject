@@ -62,15 +62,14 @@ public class NetShipControllerView : thelab.mvc.View<SpaceApplication>
 
     private void Update()
     {
+        fraction += Time.deltaTime; //sendInterval / Time.deltaTime
+        //fraction = Mathf.Clamp01(fraction);
+        Log(fraction + "===" + Time.deltaTime);
+        ShipTransform.position = Vector3.Lerp(oldPos, syncPos, fraction);
+        ShipTransform.rotation = Quaternion.Lerp(ShipTransform.rotation, syncRot, Time.deltaTime * lerpRate);
+
         if (!tno.isMine)
-        {
-            fraction += Time.deltaTime; //sendInterval / Time.deltaTime
-            //fraction = Mathf.Clamp01(fraction);
-            Log(fraction + "===" + Time.deltaTime);
-            ShipTransform.position = Vector3.Lerp(oldPos, syncPos, fraction);
-            ShipTransform.rotation = Quaternion.Lerp(ShipTransform.rotation, syncRot, Time.deltaTime * lerpRate);
             return;
-        };
 
         m_ship.Update_bynet();
         lastSendTime += Time.deltaTime;
@@ -78,7 +77,7 @@ public class NetShipControllerView : thelab.mvc.View<SpaceApplication>
         {
             Debug.Log("send at " + lastSendTime);
             lastSendTime = 0;
-            tno.Send("SetRB", Target.OthersSaved, ShipTransform.position, ShipTransform.rotation);
+            tno.Send("SetRB", Target.AllSaved, m_ship.CachedTransform.position, m_ship.CachedTransform.rotation);
         }
     }
 
