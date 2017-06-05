@@ -29,7 +29,8 @@ public class SpaceshipController : MonoBehaviour
 	{
 		get
 		{
-			return Mathf.Lerp(m_spaceship.SpeedRange.x, m_spaceship.SpeedRange.y, SpeedFactor);
+			return Mathf.Lerp(m_spaceship.SpeedRange.x, m_spaceship.SpeedRange.y, m_joystic.axisY.axisValue * 0.5f + 0.5f);
+			//return Mathf.Lerp(m_spaceship.SpeedRange.x, m_spaceship.SpeedRange.y, SpeedFactor);
 		}
 	}
 
@@ -40,9 +41,9 @@ public class SpaceshipController : MonoBehaviour
 	{
 		get
 		{
-			return m_spaceship.AccelerationCurve.Evaluate(SmoothedInput.w);
-		}
-	}
+            return m_spaceship.AccelerationCurve.Evaluate(SmoothedInput.w);
+        }
+    }
 
     public bool EnableSpeedUp { get; set; }
 
@@ -186,7 +187,7 @@ public class SpaceshipController : MonoBehaviour
         switch (m_input.Mode)
         {
             case InputMode.Keyboard:
-                currentRawInput.x = m_joystic.axisY.axisValue * currentKeyboardSensitivity * -1f;
+                //currentRawInput.x = m_joystic.axisY.axisValue * currentKeyboardSensitivity * -1f;
                 currentRawInput.y = m_joystic.axisX.axisValue * currentKeyboardSensitivity;
 
                 //currentRawInput.x = Input.GetAxis(m_input.Keyboard.InputNames.AxisX) * currentKeyboardSensitivity;
