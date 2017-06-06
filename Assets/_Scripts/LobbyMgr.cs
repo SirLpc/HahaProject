@@ -8,8 +8,9 @@ public class LobbyMgr : TNBehaviour
     [SerializeField] private Canvas canvas;
     [SerializeField] private string connectIp = "115.28.87.227";
     [SerializeField] private int connectPort = 5127;
-    [SerializeField] private int roomPlayerCount = 2;
 	[SerializeField] private string gameScene = "game";
+    
+    private int roomPlayerCount = SpaceConsts.MaxPlayerNum;
 
     private Button button_play;
     private Button button_connect;

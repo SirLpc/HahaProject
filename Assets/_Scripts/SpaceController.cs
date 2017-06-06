@@ -16,6 +16,8 @@ public class SpaceController : Controller<SpaceApplication>
     private bool _persistent = false;
     public bool Persistent { get { return _persistent; } }
 
+    private float _waitPlayerJoinTimer = 0f;
+
     private void Awake()
     {
         tno = GetComponent<TNObject>();
@@ -29,16 +31,39 @@ public class SpaceController : Controller<SpaceApplication>
 
         if (_channelID < 1) _channelID = TNManager.lastChannelID;
 
-        Ship.CreatMyShip();
-        
+        var randPos = Vector3.zero;// Random.insideUnitSphere * 100f;
+        var randRotAng = Vector3.zero;// new Vector3(0f, Random.Range(0f, 360f), 0f);
+        Ship.CreatMyShip(randPos, randRotAng);
+
+        yield return StartCoroutine(CoWaitAllPlayerJoin());
+
+        app.view.EnableAllShips(true);
     }
+
+    private IEnumerator CoWaitAllPlayerJoin()
+    {
+        _waitPlayerJoinTimer = 0f;
+        while (app.view.Ships.Count < app.model.TotalPlayerNum)
+        {
+            _waitPlayerJoinTimer += Time.deltaTime;
+            if (_waitPlayerJoinTimer < app.model.WailPlayerJoinTime)
+                yield return null;
+            else
+                yield break;
+        }
+    }
+
+
 
     public override void OnNotification(string p_event, Object p_target, params object[] p_data)
     {
         switch (p_event)
         {
             case SpaceNotifications.ShipCreated:
-                app.view.AddNewShip(p_data[0] as NetShipControllerView, (bool)p_data[1]);
+                var createdShip = p_data[0] as NetShipControllerView;
+                app.view.AddNewShip(createdShip, (bool)p_data[1]);
+                //游戏开始的时候不能动，要等所有玩家OK才开始
+                createdShip.EnableShip(false);
                 break;
 
             case SpaceNotifications.SpeedUp:
@@ -51,6 +76,8 @@ public class SpaceController : Controller<SpaceApplication>
 
             case SpaceNotifications.BulletAttakOn:  //attacker called
                 var tagetShip = p_data[0] as NetShipControllerView;
+                Log("my id " + TNManager.playerID);
+                Log("other ship ton id" + tagetShip.tno.ownerID + "===" + tagetShip.tno.owner.id);
                 tno.Send("TakeDamage", tagetShip.tno.ownerID, (int)p_data[1], app.view.MyShip.tno.ownerID);
                 break;
 
@@ -108,6 +135,7 @@ public class SpaceController : Controller<SpaceApplication>
     [TNet.RFC]
     private void TakeDamage(int damage, int attackPlayerId)
     {
+        Log("damange rfc");
         Notify(SpaceNotifications.ShipTakeDamage, damage, attackPlayerId);
     }
 

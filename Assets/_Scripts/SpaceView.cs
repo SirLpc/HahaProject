@@ -9,6 +9,7 @@ public class SpaceView : thelab.mvc.View<SpaceApplication>
     private NetShipControllerView _myShip;
 
     private List<NetShipControllerView> _ships = new List<NetShipControllerView>();
+    public List<NetShipControllerView> Ships { get { return _ships; } }
 
     public void AddNewShip(NetShipControllerView ship, bool isMyShip)
     {
@@ -19,10 +20,15 @@ public class SpaceView : thelab.mvc.View<SpaceApplication>
         ship.EnableParticaleFollow(isMyShip);
     }
 
-    public void AttakOn(NetShipControllerView ship, int damage)
+    public void EnableAllShips(bool enable)
     {
-
+        foreach (var s in Ships)
+        {
+            s.EnableShip(enable);
+        }
     }
+
+
 
 
 }

@@ -6,5 +6,10 @@ using thelab.mvc;
 public class SpaceModel : Model<SpaceApplication>
 {
 
+    [System.NonSerialized]
+    public int TotalPlayerNum = SpaceConsts.MaxPlayerNum;
+
+    public float WailPlayerJoinTime = 10f;
+
 
 }

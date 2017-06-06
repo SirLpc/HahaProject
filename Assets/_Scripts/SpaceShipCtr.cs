@@ -23,21 +23,28 @@ public class SpaceShipCtr : Controller<SpaceApplication>
     {
         switch (p_event)
         {
+            //Only under attacked ship will call this function!!!!
             case SpaceNotifications.ShipTakeDamage: //under attack called
                 var damage = (int)p_data[0];
-                var attackShip = p_data[1] as NetShipControllerView;
+                var attackPid = (int)p_data[1];
+                var attackShip = app.view.Ships.Find(s => s.tno.ownerID == attackPid);
                 Damage(damage);
                 break;
 
+            //Only under attacked ship will call this function!!!!
+            case SpaceNotifications.ShipRespawned:
+                SetHp(100);
+                break;
+       
             default:
                 break;
         }
     }
 
-    public void CreatMyShip()
+    public void CreatMyShip(Vector3 position, Vector3 rotation)
     {
         TNManager.Instantiate(app.controller.ChannelID, "CreateShipAtPosition",
-            _shipPrefabPath, app.controller.Persistent, transform.position, transform.rotation);
+            _shipPrefabPath, app.controller.Persistent, position, rotation);
 
         SetHp(100);
     }
@@ -57,7 +64,7 @@ public class SpaceShipCtr : Controller<SpaceApplication>
     }
 
     [RCC]
-    static GameObject CreateShipAtPosition(GameObject prefab, Vector3 pos, Quaternion rot)
+    static GameObject CreateShipAtPosition(GameObject prefab, Vector3 pos, Vector3 rot)
     {
         // Instantiate the prefab
         GameObject go = prefab.Instantiate();
@@ -65,7 +72,8 @@ public class SpaceShipCtr : Controller<SpaceApplication>
         // Set the position and rotation based on the passed values
         Transform t = go.transform;
         t.position = pos;
-        t.rotation = rot;
+        t.eulerAngles = rot;
+
         return go;
     }
 

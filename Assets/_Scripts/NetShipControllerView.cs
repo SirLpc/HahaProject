@@ -64,7 +64,7 @@ public class NetShipControllerView : thelab.mvc.View<SpaceApplication>
     {
         fraction += Time.deltaTime; //sendInterval / Time.deltaTime
         //fraction = Mathf.Clamp01(fraction);
-        Log(fraction + "===" + Time.deltaTime);
+        //Log(fraction + "===" + Time.deltaTime);
         ShipTransform.position = Vector3.Lerp(oldPos, syncPos, fraction);
         ShipTransform.rotation = Quaternion.Lerp(ShipTransform.rotation, syncRot, Time.deltaTime * lerpRate);
 
@@ -75,7 +75,7 @@ public class NetShipControllerView : thelab.mvc.View<SpaceApplication>
         lastSendTime += Time.deltaTime;
         if (lastSendTime >= sendInterval)
         {
-            Debug.Log("send at " + lastSendTime);
+            //Debug.Log("send at " + lastSendTime);
             lastSendTime = 0;
             tno.Send("SetRB", Target.AllSaved, m_ship.CachedTransform.position, m_ship.CachedTransform.rotation);
         }
@@ -103,13 +103,20 @@ public class NetShipControllerView : thelab.mvc.View<SpaceApplication>
         var hp = TNManager.GetPlayerData<int>(SpaceConsts.PlayerHpPath);
         Log("in view set player data" + hp);
         if (hp <= 0)
-            gameObject.SetActive(false);
+        {
+            Respawn();
+        }
+    }
+
+    private void Respawn()
+    {
+        m_ship.ResetCachedTransform();
+        Notify(SpaceNotifications.ShipRespawned);
     }
 
     /// <summary>
     /// RFC for the rigidbody will be called once per second by default.
     /// </summary>
-
     [RFC]
     private void SetRB(Vector3 pos, Quaternion rot)
     {
@@ -117,6 +124,11 @@ public class NetShipControllerView : thelab.mvc.View<SpaceApplication>
         oldPos = ShipTransform.position;
         syncPos = pos;
         syncRot = rot;
+    }
+
+    public void EnableShip(bool enable)
+    {
+        gameObject.SetActive(enable);
     }
 
     public void SpeedUp(bool enableSpeedUp)

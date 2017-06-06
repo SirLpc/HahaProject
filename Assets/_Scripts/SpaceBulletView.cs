@@ -30,9 +30,10 @@ public class SpaceBulletView : thelab.mvc.View<SpaceApplication>
     private void OnTriggerEnter(Collider other)
     {
         var shipView = other.transform.root.GetComponentInParent<NetShipControllerView>();
+        Log("in trigger");
         if (shipView && !shipView.Equals(app.view.MyShip))
         {
-            Log("collision ship");
+            Log("other ship ton id" + shipView.tno.ownerID + "===" + shipView.tno.owner.id);
             Notify(SpaceNotifications.BulletAttakOn, shipView, 10);
             _tno.DestroySelf();
         }

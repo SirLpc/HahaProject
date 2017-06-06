@@ -133,6 +133,12 @@ public class SpaceshipController : MonoBehaviour
 		UpdateOrientationAndPosition();
 	}
 
+    public void ResetCachedTransform()
+    {
+        CachedTransform.position = Vector3.zero;
+        chackedTransform.rotation = Quaternion.identity;
+    }
+
     private void UpdateCamera()
 	{
 		Vector2 focalPointOnMoveOffset = Vector2.Lerp(m_camera.LookAtPointOffset.OnTurn,
