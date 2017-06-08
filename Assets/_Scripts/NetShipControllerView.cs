@@ -13,6 +13,8 @@ public class NetShipControllerView : thelab.mvc.View<SpaceApplication>
     private float sendInterval = 0.1f;
     [SerializeField]
     private float lerpRate = 4.0f;
+    [SerializeField]
+    private UnityEngine.UI.Slider _hpBar;
 
     private Vector3 oldPos;
 
@@ -79,6 +81,8 @@ public class NetShipControllerView : thelab.mvc.View<SpaceApplication>
             lastSendTime = 0;
             tno.Send("SetRB", Target.AllSaved, m_ship.CachedTransform.position, m_ship.CachedTransform.rotation);
         }
+
+        _hpBar.transform.LookAt(Camera.main.transform);
     }
 
     //private void FixedUpdate()
@@ -94,7 +98,7 @@ public class NetShipControllerView : thelab.mvc.View<SpaceApplication>
 
     private void OnSetPlayerData(Player p, string path, DataNode node)
     {
-        if (!p.Equals(TNManager.player))
+        if (!p.id.Equals(tno.ownerID))
             return;
 
         if (path != SpaceConsts.PlayerHpPath)
@@ -106,6 +110,8 @@ public class NetShipControllerView : thelab.mvc.View<SpaceApplication>
         {
             Respawn();
         }
+
+        _hpBar.value = 1 - (float)hp / (float)app.model.ShipMaxHp;
     }
 
     private void Respawn()

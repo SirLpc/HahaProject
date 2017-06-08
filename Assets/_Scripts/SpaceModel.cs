@@ -11,5 +11,7 @@ public class SpaceModel : Model<SpaceApplication>
 
     public float WailPlayerJoinTime = 10f;
 
+    public int ShipMaxHp = 100;
+
 
 }

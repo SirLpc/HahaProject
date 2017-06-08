@@ -17,7 +17,6 @@ public class SpaceShipCtr : Controller<SpaceApplication>
     [SerializeField]
     private string _shipPrefabPath;
 
-    public int MaxHp = 100;
 
     public override void OnNotification(string p_event, Object p_target, params object[] p_data)
     {
@@ -53,7 +52,7 @@ public class SpaceShipCtr : Controller<SpaceApplication>
     {
         int hp = TNManager.GetPlayerData<int>(SpaceConsts.PlayerHpPath);
         hp -= damage;
-        hp = Mathf.Clamp(hp, 0, MaxHp);
+        hp = Mathf.Clamp(hp, 0, app.model.ShipMaxHp);
         SetHp(hp);
     }
 

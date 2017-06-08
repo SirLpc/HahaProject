@@ -11,7 +11,7 @@ namespace UnityStandardAssets.Utility
         private int m_FpsAccumulator = 0;
         private float m_FpsNextPeriod = 0;
         private int m_CurrentFps;
-        const string display = "{0} FPS";
+        const string display = "{0} FPS \n {1} Ping";
         private Text m_Text;
 
 
@@ -31,8 +31,9 @@ namespace UnityStandardAssets.Utility
                 m_CurrentFps = (int) (m_FpsAccumulator/fpsMeasurePeriod);
                 m_FpsAccumulator = 0;
                 m_FpsNextPeriod += fpsMeasurePeriod;
-                m_Text.text = string.Format(display, m_CurrentFps);
+                m_Text.text = string.Format(display, m_CurrentFps, TNet.TNManager.ping);
             }
         }
+
     }
 }
